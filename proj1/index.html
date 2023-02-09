@@ -1,0 +1,247 @@
+
+
+<style>
+	*{
+	  font-family: "San Serif";
+	}
+
+	h1{
+	  font-size: 40px;
+	}
+
+	h2{
+	  font-size: 30px;
+	}
+
+	p{
+	  font-size: 20px;
+	  margin: 0, 50px, 0, 50px;
+	}
+
+	ul{
+	  font-size: 20px;
+	}
+
+	body {
+		border: 100px, 0, 100px, 0;
+	   color: black;
+	}
+
+	.task_img {
+		width: 700px;
+		margin: 20px;
+	}
+
+</style>
+
+<html>
+
+<body>
+	<center>
+	<h1 id="project-1-rasterizer">Project 1: Rasterizer</h1>
+
+
+	<blockquote>
+
+
+		<p>Chaomin Li
+
+
+			<br>
+
+
+		Zhiqi Yan</p>
+
+
+	</blockquote>
+	</center>
+
+	<hr>
+
+
+	<h2 id="overview">Overview</h3>
+
+
+	<p>In this project, we have implemented some rasterization techniques. From drawing a triangle using three-line testing to texture mapping with mipmap, we were able to practice the concepts 
+        we learned in lectures. We are curious to see how applying linear algebra and geometry to the pictures yields the expected outputs. In real life, we used a lot of photo editing tools. 
+        This project lets us take a glance of what happens behind the screen. 
+	</p>
+
+	<hr>
+
+	<h2 id="task-1">Task 1</h3>
+
+	<center>
+		<img src="img/task1-1.png" class="task_img">
+	</center>
+
+	<p>Before rasterizing the triangle, we already knew the color and three vertices of the triangle. The first step is to make sure that, for each triangle, we iterate through the vertices 
+        in the same order (counter-clockwise if the determinant of [XY0_1 XY1_1 XY2_1]T is larger than 0). This step can guarantee that we apply the correct three-line test for each triangle 
+        in the graph. </br> After swapping points into correct order, our next step is to create a bounding box around the triangle, using (maxX, minX) as width and (maxY, minY) as height. 
+        For each point (x,y) inside the bounding box, we test if the point (x+0.5,y+0.5) is inside the triangle using the three-line test. We have the <em>inside_triangle</em> helper method
+        to decide if the point is inside the triangle. We count the points on boundaries as inside-triangle. And we fill color into those inside-triangle pixels. 
+    </p>
+	<hr>
+
+	<h2 id="task-2">Task 2</h3>
+
+	<p>From the picture in task 1, we see the boundaries of triangles are jaggy. This is because we apply the three-line test to each single 
+        pixel box and fill it with either the full color (inside) or white (outside). To do the antialiasing, we want to apply filters to the triangle’s 
+        edges to make them blurrier. By doing this, we make the boundaries smoother, especially when we look at it far away from the graphics. </br>
+        Supersampling is a good practice for antialiasing. We set the sample rate n*n, so we divide each pixel into n*n subpixels. We apply three-line tests 
+        to each pixel, find out if they are inside the triangle, and fill it with color. In the end, we get an average of those colors over subpixels inside 
+        method <em>resolve_to_framebuffer</em> and fill the rgb_buffer with the average color. Here are pictures with supersample rates 1/4/16:</p>
+
+	<center>
+		<hr>
+		<img src="img/task2-1.png" class="task_img">
+		<br>
+		Sample Rate 1
+		<hr>
+		<img src="img/task2-4.png" class="task_img">
+		<br>
+		Sample Rate 4
+		<hr>
+		<img src="img/task2-16.png" class="task_img">
+		<br>
+		Sample Rate 16
+	</center>
+
+	<p>As we increase the sample rate above, the triangle border becomes smoother as pixels near the border are filled with gradient colors. This is because, 
+        with larger sample rate, we can get a more accurate ratio between the white and the color, and fill the pixel with the better color after taking the average.
+    </p>
+
+	<hr>
+
+	<h2 id="task-3">Task 3</h3>
+
+	<p>For my robot, I want to make it look like superman. So I updated the color first to the classic blue-and-red suit. And I add the waving posture to my superman. 
+        To accomplish that, I need to put his left arm down, by rotating his arm by -45 degree and rotating lower arm by -90 degree. For his right arm, I rotate the lower 
+        arm by -90 degree to make him wave.</p>
+
+
+	<center>
+
+		<img src="img/task3_waving man.png" class="task3">
+		<br>
+		A waving superman
+
+	</center>
+
+	<p><hr></p>
+
+	<h2 id="task4">Task 4</h3>
+
+
+	<p>Barycentric coordinates are coordinates in the form of (alpha,beta,gamma) that captures how close a single point (x,y) is relative to each vertex of a triangle. 
+        It is usually used to do color interpolation by filling color into a triangle based on how close each area is to each vertex of the triangle, as shown on the left 
+        image (the top vertex has color of blue, and thus upper triangle area that are closer to the top vertex appears bluer). It can also be used to do texture mapping, 
+        which will be explained more in task 5.</p>
+
+	<center>
+
+		<img src="img/barycentric.png" class="task_img">
+
+
+		<img src="img/test7.png" class="task_img">
+
+
+	</center>
+
+	<p><hr></p>
+
+
+	<h2 id="task-5">Task 5</h3>
+
+
+	<p>Texture Mapping is performed using a barycentric coordinate method in this task. In short, we get the barycentric coordinate for each sampled point, and apply 
+        the texture coordinate of the triangle vertices with the barycentric coordinate to get the texture coordinate of each sampled point. We then get the texture color 
+        at each sampled point and put it into our sample buffer. In the process of getting the texture coordinate of each sampled point, we probably get a float value and 
+        we have two pixel sampling methods to get the correct color. Firstly, the nearest sampling is basically finding the nearest integer texture coordinate and extracting the color. 
+        Secondly, the bilinear sampling takes four nearest texture coordinates which forms a 2 by 2 pixel square, and we use relative distance to these pixels to have a weighted average 
+        of these pixel colors and return it.When comparing these two methods, we have four images showing nearest sampling at 1 sample per pixel, nearest sampling at 16 
+        samples per pixel, bilinear sampling at 1 sample per pixel, and bilinear sampling at 16 samples per pixel. We can see that bilinear sampling has less artifact than 
+        nearest sampling in general when using the same sampling rate..</p>
+
+	<p><center>
+
+		<img src="img/texmap1_neareast_1.png" class="task_img">
+
+		<img src="img/texmap1_bilinear_1.png" class="task_img">
+
+		<img src="img/texmap1_neareast_1.png" class="task_img">
+
+		<img src="img/texmap1_bilinear_16.png" class="task_img">
+
+	</center></p>
+
+	<p><hr></p>
+
+	<h2 id="task-6">Task 6</h3>
+
+	<ul>
+
+		<li><b>Explain level sampling in your own words and describe how you implemented it for texture mapping.</b>
+
+
+			<ul>
+				<li>Level sampling builds up a hierarchy of levels of the same texture, where each level stores the same texture with different 
+                    resolution. The level 0 is the full resolution and as we go up in level, the resolution goes down. Sampling from the appropriate 
+                    level improves the performance. We have three options for level sampling. </li>
+				<li>The "Zero Level" is to use the full resolution texture.</li>
+				<li>The "Nearest Level" is to use the nearest integer level from our calculated level. We calculated the distance difference 
+                    between the texture coordinates we got from (x,y) and (x+1, y), (x, y+1), and used the log2 value of the farthest one to get the level. </li>
+				<li>The "Linear Level" is to use the calculated level mentioned above and extract two colors based on the nearest two integer 
+                    levels and return their weighted average.</li>
+
+			</ul>
+
+		</li>
+
+		<li>
+            <b>You can now adjust your sampling technique by selecting pixel sampling, level sampling, or the number of samples per pixel. Describe the 
+            tradeoffs between speed, memory usage, and antialiasing power between the three various techniques.</b>
+
+			<ul>
+
+				<li>Pixel sampling: bilinear sampling can create a large anti-aliasing effect, but has lower speed due to more computation.
+
+				</li>
+
+				<li>Level Sampling: “Linear Level” can create a large anti-aliasing effect, while only taking a little bit more memory usage due to mipmap storage. 
+
+				</li>
+
+				<li>Supersampling: More sampling rate creates a large anti-aliasing effect, but it has much more memory usage and lower speed. It would be better to use level sampling considering the cost it has.
+
+				</li>
+
+			</ul>
+
+		</li>
+
+		<li><b>Using a png file you find yourself, show us four versions of the image,
+
+			using the combinations of L_ZERO and P_NEAREST, L_ZERO and P_LINEAR, L_NEAREST and P_NEAREST, as well as L_NEAREST and P_LINEAR</b>
+
+		</li>
+
+	</ul>
+
+	<center>
+
+		<img src="img/ow_L0_P0.png" class="task_img">
+
+		<img src="img/ow_L0_P1.png" class="task_img">
+
+		<img src="img/ow_L1_P0.png" class="task_img">
+
+		<img src="img/ow_L1_P1.png" class="task_img">
+
+	</center>
+
+	<hr>
+
+	<p>The website link is <a href="https://zhaominl.github.io/proj-webpage-qq360/proj1/index.html">https://zhaominl.github.io/proj-webpage-qq360/proj1/index.html</a></p>
+
+</body></html>	
