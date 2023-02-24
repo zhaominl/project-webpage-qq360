@@ -50,7 +50,12 @@
 
 <h2 align="middle">Overview</h2>
 <p>
-    YOUR RESPONSE GOES HERE
+    Geometric modeling helps us to simulate complex objects using different shading and meshing technique.
+    Specifically in project 2, we implemented several methods related to Bezier curves, Bezier surfaces, area-weighted normal of vertex for phong shading, and mesh editing.
+    We are also introduced to the de Casteljau algorithm and the half-edge data structure, giving us the methodology for completing these tasks.
+    Finally, we were able to render Bezier curves and Bezier surfaces, as well as altering triangle meshes that yield different visualization of geometric objects.
+
+
 </p>
 <br>
 
@@ -64,7 +69,21 @@
   Briefly explain de Casteljau's algorithm and how you implemented it in order to evaluate Bezier curves.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    The Casteljau's algorithm is a recursive algorithm that helps us find an perfectly interpolated curve along a series of control points. 
+    Specifically, given an input of \(n\) control points and parameter \(t\),
+    we return a single interpolated point that can help us draw the curve by following these steps:
+    <ol>
+        <li>
+            For each edge formed by neighboring control points, find a new point on that edge using linear interpolation with \(t\in[0,1]\). 
+            This can be calculated by \(p_i\'=p_i * (1-t) + p_(i+1) * t\).
+        </li>
+        <li>
+            Connect all neighboring new point to form another level of control points.
+        </li>
+        <li>
+            Recursively calling this function with new control points until we get a single point, in which case we will return.
+        </li>
+    </ol>
 </p>
 <br>
 
@@ -73,13 +92,8 @@
   Take a look at the provided .bzc files and create your own Bezier curve with 6 control points of your choosing. Use this Bezier curve for your screenshots below.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    I created a new file "curve3.bzc" that has six control points. The screenshots below is based on this file.
 </p>
-<!-- Example of including a single figure -->
-<div align="middle">
-  <img src="images/your_file.png" align="middle" width="50%">
-</div>
-<br>
 
 <b>
   Show screenshots of each step / level of the evaluation from the original control points down to the final evaluated point. Press <kbd>E</kbd> to step through. Toggle <kbd>C</kbd> to show the completed Bezier curve as well.
@@ -89,29 +103,29 @@
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="img/t1-1.png" align="middle" width="400px"/>
         <figcaption>Level 0</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="img/t1-2.png" align="middle" width="400px"/>
         <figcaption>Level 1</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="img/t1-3.png" align="middle" width="400px"/>
         <figcaption>Level 2</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="img/t1-4.png" align="middle" width="400px"/>
         <figcaption>Level 3</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="img/t1-5.png" align="middle" width="400px"/>
         <figcaption>Level 4</figcaption>
       </td>
     </tr>
@@ -123,9 +137,21 @@
 <b>
   Show a screenshot of a slightly different Bezier curve by moving the original control points around and modifying the parameter \(t\) via mouse scrolling.
 </b>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>  
+<div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/t1-6.png" align="middle" width="400px" />
+                <figcaption>Moved last control points</figcaption>
+            </td>
+            <td>
+                <img src="img/t1-7.png" align="middle" width="400px" />
+                <figcaption>Changed the parameter t</figcaption>
+            </td>
+            <br>
+        </tr>
+    </table>
+</div>
 <br>
 
 
@@ -133,8 +159,25 @@
 <b>
   Briefly explain how de Casteljau algorithm extends to Bezier surfaces and how you implemented it in order to evaluate Bezier surfaces.
 </b>
+<div align="middle">
+    <img src="img/t2-theory.png" align="middle" width="50%" />
+    <figcaption>de Casteljau's algorithm in 2D</figcaption>
+</div>
 <p>
-    YOUR RESPONSE GOES HERE
+    The de Casteljau's algorithm can be extended to evaluate Bezier surfaces by doing a 2D version of the algorithm.
+    Specifically, given a 2D array of control points and two parameters \((u,v)\) as input,
+    we can output a single interpolated point that can help us draw the surface by following these steps:
+    <ol>
+        <li>
+            For each group of control points, we see them as a series of control points in a row, 
+            and we find a single point of this row by calling our 1D de Casteljau's algorithm mentioned above with parameter \(u\).
+        </li>
+        <li>
+            For each newly calculated single points from each row, we see them as series of control points in a colomn,
+            and we find a single point of this colomn by calling our 1D de Casteljau's algorithm mentioned above with parameter \(v\).
+            This give us the final evaluated point on the Bezier surface.
+        </li>
+    </ol>
 </p>
 <br>
 
@@ -142,9 +185,10 @@
 <b>
   Show a screenshot of bez/teapot.bez (not .dae) evaluated by your implementation.
 </b>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>
+<div align="middle">
+    <img src="img/t2.png" align="middle" width="50%" />
+    <figcaption>Teapot by Bezier Surface implementation</figcaption>
+</div>
 <br>
 
 
@@ -156,7 +200,29 @@
   Briefly explain how you implemented the area-weighted vertex normals.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    To find the area-weighted vertex normals of a specific vertex,
+    we iterate through all neighboring faces of that, and calculate the normals using cross products.
+    We then sum them and normalize them at the end. Specifically, we follow these steps:
+    <ol>
+        <li>
+            Retrieve the half edge associated with this vertex.
+        </li>
+        <li>
+            Use the "next()" function of the current half edge to find the next half edge, and use the "vertex()" function give us the source vertex of the current half edge.
+            These two functions can help us find a face associated with the current half edge, and also the three vertices of this face.
+        </li>
+        <li>
+            Apply cross product by using the three vertices can give us the normal vector of the current face, and we know half of the length of the normal vector
+            is the area of the triangle formed by vectors from the cross product. We multiply the area with the normal vector of the face, and added it to our cumulative normal vector.
+        </li>
+        <li>
+            Find the next face by finding the associated half edge, which can be acquired by taking the "twin()" of the current half edge and get the "next()" of it.
+            Repeat the previous step until we added the normal vectors of all surrounding faces to our cumulative normal vector.
+        </li>
+        <li>
+            Lastly, normalize the cumulative normal vector and return it.
+        </li>
+    </ol>
 </p>
 <br>
 
@@ -164,9 +230,21 @@
 <b>
   Show screenshots of dae/teapot.dae (not .bez) comparing teapot shading with and without vertex normals. Use <kbd>Q</kbd> to toggle default flat shading and Phong shading.
 </b>
-<p>
-    YOUR RESPONSE GOES HERE
-</p>
+<div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/t3-1.png" align="middle" width="400px" />
+                <figcaption>Shading without vertex normals</figcaption>
+            </td>
+            <td>
+                <img src="img/t3-2.png" align="middle" width="400px" />
+                <figcaption>Shading with vertex normals</figcaption>
+            </td>
+            <br>
+        </tr>
+    </table>
+</div>
 <br>
 
 
