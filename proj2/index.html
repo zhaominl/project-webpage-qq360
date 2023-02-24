@@ -175,7 +175,47 @@
   Briefly explain how you implemented the edge flip operation and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+  <br>
+  <table style="width: 100%">
+    <tr>
+      <td>
+      <img src="img/t4-1-1.jpg" align="middle" width="500px"/>
+      <figcaption align="middle">Mesh before edge flip, with all elements marked</figcaption>
+      </td>
+      <td>
+      <img src="img/t4-1-2.jpg" align="middle" width="500px"/>
+      <figcaption align="middle">Mesh after edge flip, with all elements marked</figcaption>
+      </td>
+    </tr>
+  </table>
+  <br>
+  To solve the edge flip problem, we first drew a graph of the original pair of triangles (shown in Figure NO), we marked all the vertices, edges, faces, and halfedges on the graph. 
+  We also drew a graph of the triangles after edge flip and marked all the elements in the new graph. By doing this, we can easily map the old components to the new components. 
+  This step simplifies the process of transfer geometric concept to runnable code. To implement the <em>flipEdge</em>, we did following steps:
+  <ol>
+    <li>
+      Check if the edge is on boundary. If yes, we do not flip the edge.
+    </li>
+    <li>
+      Based on the original graph, we assign all the vertices, edges, faces, and halfedges. In addition, we records the twin halfedges of 4 halfedges on the sides 
+      (h1t, h2t, h4t, h5t in the graph), since fliping edges will affect them as well.  
+    </li>
+    <li>
+      Decide if there is new element been created. In <em>flipEdge</em> case, there is no new element initiated. 
+    </li>
+    <li>
+      Comparing the graphs of mesh before and after edge fliping, we assign new halfedges to all the vertices, edges, and faces. Noticing that edge is direction-less, so we only assign one halfedge to each edge.
+      We assign the corresponding halfedge to the vertex if the vertex locates on the halfedge's point-from position.
+    </li>
+    <li>
+      Re-assign each halfedge's next, twin, vertex, edge, and face by calling <code>Halfedge::setNeighbors</code> on each one of them, based on the after-flip graph we drew. Noticing since we flip
+      the edge <em>e0</em>, the original halfedge <em>h0</em> points from <em>v2</em> to <em>v3</em> now. And <em>h0</em> and its twin <em>h3</em> share the same edge <em>e0</em>. Also noticing that we 
+      need to re-assign all the properties of the 4 twin halfedges outside this pair of triangles too (<em>h1t h2t h4t h5t</em>), because their vertices, twins, and edges were changed.
+    </li>
+    <li>
+      Finally, we returned the edge <em>e0</em> we passed into this function, and it is flipped already.
+    </li>
+  </ol>
 </p>
 <br>
 
@@ -184,7 +224,18 @@
   Show screenshots of the teapot before and after some edge flips.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+  <table style="width: 100%">
+    <tr>
+      <td>
+      <img src="img/t4-1.png" align="middle" width="500px"/>
+      <figcaption align="middle"><code>dae/teapot.dae</code> before edge flip</figcaption>
+      </td>
+      <td>
+      <img src="img/t4-2.png" align="middle" width="500px"/>
+      <figcaption align="middle"><code>dae/teapot.dae</code> after multiple edge flip</figcaption>
+      </td>
+    </tr>
+  </table>
 </p>
 <br>
 
@@ -193,7 +244,8 @@
     Write about your eventful debugging journey, if you have experienced one.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    When we first compiled the code, we forgot the vertices of each pair of the halfedge on the side and its twin are different (eg. <em>h2</em> and <em>h1t</em> in the figure), and we
+    assigned wrong vertices to the twin halfedges. Therefore, when we flip the edge, it turns the peripheral triangles (corresponding to <em>h1t h2t h4t h5t</em>) into transparent triangles.
 </p>
 <br>
 
@@ -203,7 +255,47 @@
   Briefly explain how you implemented the edge split operation and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+  <br>
+  <table style="width: 100%">
+    <tr>
+      <td>
+      <img src="img/t4-1-1.jpg" align="middle" width="500px"/>
+      <figcaption align="middle">Mesh before edge split, with all elements marked</figcaption>
+      </td>
+      <td>
+      <img src="img/t5-1-1.jpg" align="middle" width="500px"/>
+      <figcaption align="middle">Mesh after edge split, with all elements marked</figcaption>
+      </td>
+    </tr>
+  </table>
+  <br>
+  First, we reused the graph we drew for the original pair of triangles (shown in Figure NO). And we drew the grpah of four triangles after edge split (shown in Figure ) and marked all the 
+  elements in the new graph. We also marked all the newly added vertex, edges, faces and halfedges. We did these in order to map the old components to the new components. 
+  To implement the <em>flipEdge</em>, we did following steps:
+  <ol>
+    <li>
+      Check if the edge is on boundary. If yes, we implement a different edge split (for extra credits).
+    </li>
+    <li>
+      Based on the original graph, we assign all the vertices, edges, faces, and halfedges. We still records the twin halfedges of 4 halfedges on the sides.
+    </li>
+    <li>
+      Decide if there is new element been created. In <em>splitEdge</em> case, since the original two triangles are splited into four triangles, there are new elements. We found there were one new
+      vertex, three new edges, and two new faces. Since each edges corresponded to two halfedges (we only need to assign one to the edge), we created six new halfedges. </br>
+      Later, we set the <em>isNew</em> flag of those new elements to True. As the edge <em>e0</em> and <em>e6</em> were generated from the old edge, we set their flags to False.
+    </li>
+    <li>
+      Comparing the graphs of mesh before and after edge splitting, we assign new halfedges to all the vertices, edges, and faces. We also need to assign the new halfedges to the elements. In this case, 
+      the graph we drew significantly improved our efficicency. 
+    </li>
+    <li>
+      Re-assign each halfedge's next, twin, vertex, edge, and face by calling <code>Halfedge::setNeighbors</code> on each one of them, based on the after-split graph we drew. In the middle, 
+      the new vertex <em>m</em> has degree of 4. Each pair of the twin halfedges in the middle shares the same edge. Also do not forget the 4 twin halfedges outside our splited triangles (<em>h1t h2t h4t h5t</em>).
+    </li>
+    <li>
+      Finally, we returned the new vertex created by edge splitting.
+    </li>
+  </ol>
 </p>
 <br>
 
@@ -212,7 +304,18 @@
     Show screenshots of a mesh before and after some edge splits. 
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+  <table style="width:100%">
+    <tr>
+      <td>
+      <img src="img/t4-1.png" align="middle" width="500px"/>
+      <figcaption align="middle"><code>dae/teapot.dae</code> before edge split</figcaption>
+      </td>
+      <td>
+      <img src="img/t5-1.png" align="middle" width="500px"/>
+      <figcaption align="middle"><code>dae/teapot.dae</code> after edge split</figcaption>
+      </td>
+    </tr>
+  </table>
 </p>
 <br>
 
@@ -221,7 +324,18 @@
     Show screenshots of a mesh before and after a combination of both edge splits and edge flips.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+  <table style="width:100%">
+    <tr>
+      <td>
+      <img src="img/t4-1.png" align="middle" width="500px"/>
+      <figcaption align="middle"><code>dae/teapot.dae</code> before edge flip and split</figcaption>
+      </td>
+      <td>
+      <img src="img/t5-2.png" align="middle" width="500px"/>
+      <figcaption align="middle"><code>dae/teapot.dae</code> after edge flip and split (red is flip, green is split, blue is mix)</figcaption>
+      </td>
+    </tr>
+  </table>
 </p>
 <br>
 
@@ -230,7 +344,8 @@
     Write about your eventful debugging journey, if you have experienced one.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+    Thanks to the graphs we drew, our code compiled and ran successfully on the first attemp. However, we later updated the code by setting the <em>isNew</em>
+    flag to True for those new edges and vertices (we have two new edges and one new vertex in total). This update helps we write the unsampling method. 
 </p>
 <br>
 
@@ -249,7 +364,49 @@
   Briefly explain how you implemented the loop subdivision and describe any interesting implementation / debugging tricks you have used.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+  By using the <em>flipEdge</em> and <em>splitEdge</em> in previous tasks, we are able to implement the loop subdivision. There are two main tasks to complete in this function.
+  First is to subdivide each triangle in the mesh into 4 triangles, using <b>4-1 subdivision</b>. Second is to place  the vertices onto the new position, based on weighted average of neighboring 
+  vertex positions. We have two different formula to compute for newly added vertices and existed vertices. We split the task into 5 steps and implemented each one within a loop:
+  <ol>
+    <li>
+      First, we calculated the new position for each existing vertex in the mesh. In this step, we used the formula <code>(1 - n * u) * original_position + u * original_neighbor_position_sum</code>.
+      The float number <em>u</em> depends on the degree <em>n</em> of the vertex (shown in Figure). We then calculated the sum of neighbors' positions using halfedge iteration, and we got the new position
+      for each vertex. 
+    </li>
+    <li>
+      Second, we calculated each new vertex's position and stored it in its edge's property <em>newPosition</em>, since we had not splited the edges yet. In this step, we used the formula 
+      \(\frac{3}{8} * (A + B) + \frac{1}{8} * (C + D)\) with vertices A, B, C, D shown in picture. We got those vertices' positions by finding the correct halfedges first.
+    </li>
+    <br>
+    <div align="middle">
+      <img src="img/t6-2.jpg" align="middle" width="500px"/>
+          <figcaption align="middle">Position Calculation for Existing and New Vertices. (Project 2 Page)</figcaption>
+    </div>
+    <br>
+    <li>
+      Thrid, we wanted to split all the existing edges. We looped through each edge in the <code>mesh.edges</code>, checked if it was new edge (turn out this step is not necessary), and split this edge.
+      After edge split, we got a new vertex, and we assigned the position calculated in step two to the vertex's <em>newPosition</em> property.
+    </li>
+    <li>
+      Fourth, for each new edge added in step 3, we got its two vertices \(V0, V1\) using its halfedge and halfedge's twin. We filter out those edge with one new vertex and one old vertex, using the condition
+      <code>(v0->isNew != v1->isNew)</code> (logic \(XOR\)). We flipped those edges like the picture below.
+    </li>
+    <br>
+    <div align="middle">
+    <img src="img/t6-1.jpg" align="middle" width="500px"/>
+        <figcaption align="middle">Procedures of Edge Split and Flip. (Project 2 Page)</figcaption>
+    </div>
+    <br>
+    <li>
+      Last, we looped through all the vertices in mesh. We updated each vertex to its new position and set its isNew flag to False.
+    </li>
+    <li>
+      One debugging trick is to print out every new vertex and edge to see if there is any unexpected behavior. One bug we saw was that the cube mesh was twisted into an irregular shape after
+      the first subdivision and could not be divided anymore. We used the debugging trick and found out that we used to loop through <code>mesh.edges</code> when we did the edge split. As the edge splitting
+      pushed new edges into the edge list, we unconsciously splited the new edges we did not want to split. We fixed this issue by remembering the original list size before doing the edge split. And we only
+      looped through length of original edge list.
+    </li>
+  </ol>
 </p>
 <br>
 
@@ -258,17 +415,148 @@
   Take some notes, as well as some screenshots, of your observations on how meshes behave after loop subdivision. What happens to sharp corners and edges? Can you reduce this effect by pre-splitting some edges?
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
-</p>
+  We unsample the cube in <code>dae/cube.dae</code> to show the smoothen effect.
+ </p>
+
+<div align="middle">
+ <table style="width:100%">
+   <tr>
+     <td>
+     <img src="img/t6-1-1.png" align="middle" width="500px"/>
+     <figcaption align="middle">The original cube with sharp edges and corners</figcaption>
+     </td>
+     <td>
+     <img src="img/t6-1-2.png" align="middle" width="500px"/>
+     <figcaption align="middle">The cube looses sharp corners after first loop subdivision</figcaption>
+     </td>
+   </tr>
+   <br>
+   <tr>
+     <td>
+       <img src="img/t6-1-3.png" align="middle" width="500px"/>
+       <figcaption align="middle"><code>The corners and edges become smooth after 3 rounds of loop subdivision</figcaption>
+     </td>
+    </tr>
+   <br>
+ </table>
+ </div>
+
+  <p>
+  Shown by the pictures above, we see that the cube's corners and edges become much smoother than the original cube, and the mesh surface becomes smoother too. This is because, when
+  we unsample the mesh, we recalculate the position for all existing vertices and possible new vertices. The 
+  position of a new vertex is the sum of weighted positions of its 4 neighbors, and the new position of an existing vertex is recalculated using weighted average positions of neighboring vertices. 
+  Therefore, the vertices on cube's edges and corners are smoothed by taking the average of the neighboring vertices, which makes the cube look round and smooth after unsampling. 
+  </p>
+
+  <p>
+  To solve the over-smooth issue and maintain the sharp corners and edges, we can be manually splits the edges around the sharp edge, like the picture shown below. 
+  We first split the edges on two faces which have the targeted edge (we want to make this edge sharp). Then we split the targeted edge, and we see two new edges perpendicular to the targeted edge.
+  We want to keep splitting those two new edges, and we split more edges that are close to the targeted border (to make the lines denser nextto the targeted border). 
+  When we unsample the cube, we recalculate the position of vertices using the weighted average positions of its neighbors. When we subdivide the dense area of the mesh, the new vertex position 
+  would be close to its old position, since some of its neighbors are close to its old position. This manual process yields a sharp corner, border, or surface.
+  </p>
+
+ <div align="middle">
+ <table style="width:100%">
+   <tr>
+     <td>
+     <img src="img/t6-2-1.png" align="middle" width="500px"/>
+     <figcaption align="middle">The original cube with manual edge split around border before unsampling</figcaption>
+     </td>
+     <td>
+     <img src="img/t6-2-2.png" align="middle" width="500px"/>
+     <figcaption align="middle">The cube with manual edge split around border after first loop subdivision</figcaption>
+     </td>
+   </tr>
+   <br>
+   <tr>
+     <td>
+       <img src="img/t6-2-3.png" align="middle" width="500px"/>
+       <figcaption align="middle">After 3 rounds of loop subdivide, the smooth mesh still has a sharp border maintained</figcaption>
+     </td>
+   </tr>
+   <br>
+ </table>
+ </div>
 <br>
 
 
 <b>
-  Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. Also explain how your pre-processing helps alleviate the effects.
+  Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice that the cube becomes slightly asymmetric after repeated subdivisions. 
+  Can you pre-process the cube with edge flips and splits so that the cube subdivides symmetrically? Document these effects and explain why they occur. 
+  Also explain how your pre-processing helps alleviate the effects.
 </b>
 <p>
-    YOUR RESPONSE GOES HERE
+  In the pictures below, we see that doing loop subdivision on the <code>dae/cube.dae</code> yields an asymmetric shape. Especially in the fourth picture, we can 
+  clearly tell the mesh has asymmetric shape from overlook perspective. This is caused by calculating the new vertices during edge split. The original cube has only
+  one edge on each face. Recalling the formula \(\frac{3}{8} * (A + B) + \frac{1}{8} * (C + D)\), when we calculate the new vertex on an edge, 
+  we actually assign different weights to different neighbor vertices. Regarding the formula above, we see that Vertex A and B have more weight than C and D do.
+  Those vertices with more weights would affect the new vertex more, resulting in asymmetric shape. Also, for all 8 existing vertices in cube, they have different degrees
+  they connect to different numbers of edges. During unsampling, the vertex with different degrees will have different ways to calculate its new position, as we take weighted averages 
+  of neighboring vertices. After several rounds of subdivisions, the sharp corners we see come from those corner with small degree (eg. degree 3).
 </p>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr>
+      <td>
+      <img src="img/t6-1-1.png" align="middle" width="500px"/>
+      <figcaption align="middle"><code>dae/cube.dae</code> before loop subdivision, with one edge on each face</figcaption>
+      </td>
+      <td>
+      <img src="img/t6-3-1.png" align="middle" width="500px"/>
+      <figcaption align="middle"><code>dae/cube.dae</code> after three rounds of unsampling, with asymmetric shape</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="img/t6-3-2.png" align="middle" width="500px"/>
+        <figcaption align="middle">After three rounds of unsampling, with asymmetric shape, from a different angle</figcaption>
+      </td>
+      <td>
+        <img src="img/t6-3-3.png" align="middle" width="500px"/>
+        <figcaption align="middle">After four rounds of unsampling, with asymmetric shape, from overlook angle</figcaption>
+      </td>
+      </tr>
+  </table>
+  </div>
+
+<p>
+  The fix is shown in pictures below. To fix this problem, we need to guarantee two things:
+  <ol>
+    <li>All the corner vertices have the same degree.</li>
+    <li>The new vertex on each face takes the same weight for its 4 neighbor vertices.</li>
+  </ol> 
+  To satisfy these, we can split the edges on each face of the cube before unsampling. This pre-process makes sure each vertex of original cube has a degree of 6,
+  and the vertex in the middle of each face weights samely on each neighbor. After taking this pre-process, unsampling can keep the symmetric shape after several rounds of loops.
+</p>
+
+<div align="middle">
+  <table style="width:100%">
+    <tr>
+      <td>
+      <img src="img/t6-4-1.png" align="middle" width="500px"/>
+      <figcaption align="middle">Pre-process the cube by splitting each edge on every face of the cube</figcaption>
+      </td>
+      <td>
+      <img src="img/t6-4-2.png" align="middle" width="500px"/>
+      <figcaption align="middle">Symmetric shape after two rounds of loop subdivision, from the same angle</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="img/t6-4-3.png" align="middle" width="500px"/>
+        <figcaption align="middle">Symmetric shape after four rounds of loop subdivision, from the same angle</figcaption>
+      </td>
+      <td>
+        <img src="img/t6-4-4.png" align="middle" width="500px"/>
+        <figcaption align="middle">Symmetric shape after four rounds of loop subdivision, from the overlook angle</figcaption>
+      </td>
+      </tr>
+  </table>
+</div>
 <br>
 
 
