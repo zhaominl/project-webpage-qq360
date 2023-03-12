@@ -84,7 +84,10 @@ Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.j
 
 <h2 align="middle">Overview</h2>
 <p>
-    YOUR RESPONSE GOES HERE
+    In this project, we explored how ray tracing works. We learned about generating rays, ray object intersection calculation, BVH acceleration, direct illumination, 
+    global illumination, and adaptive sampling. We learned about how rendering speed can be improved using bounding box checking with the help of BVH tree construction,
+    how scene objects can be rendered differently when we specify the number of bounces allowed. The process of ray tracing becomes familiar to us after working on this project
+    and with the help of visualizating our work with the GUI.
 </p>
 <br>
 
@@ -149,7 +152,18 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   Walk through your BVH construction algorithm. Explain the heuristic you chose for picking the splitting point.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    The algorithm construct the BVH like a tree datatype where all nodes stores a bounding box data that covers all primitive inside the box. 
+    Specifically, all internal node has non-empty left and right child, and all leaf node has non-empty start and end iterator that points to 
+    all primitives inside the associated bounding box. \n
+
+    The BVH tree is constructed using recursion. By checking the number of primitives inside the current bounding box, 
+    if it is a leaf node (number of primitives is small enough), we assign primitive iterator properly and return. 
+    Otherwise, we split the bounding box via a split axis, classify each primitive to either left bounding box or right bounding box based on their centroid,
+    and make these bounding box left and right child of the current node and perform the same construction on these children recursively. \n
+
+    The spliting heuristic we used is that we find the average centroid of all primitives. Tested on each split axis (x,y,z axis) with split point using the average controid,
+    calculate bounding Volume per primitive on both left and right bounding box and sum them up, whatever axis that yield the smallest bounding volume per primitive sumed is the 
+    ideal axis to split. We then use that axis to split and use the average controid on that axis as splitting point.
 </p>
 
 <h3>
@@ -160,22 +174,22 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/blob.png" align="middle" width="400px"/>
+        <figcaption>blob.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/beast.png" align="middle" width="400px"/>
+        <figcaption>beast.dae</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example3.dae</figcaption>
+        <img src="images/maxplanck.png" align="middle" width="400px"/>
+        <figcaption>maxplanck.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example4.dae</figcaption>
+        <img src="images/CBlucy.png" align="middle" width="400px"/>
+        <figcaption>CBlucy.dae</figcaption>
       </td>
     </tr>
   </table>
@@ -186,7 +200,9 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   Compare rendering times on a few scenes with moderately complex geometries with and without BVH acceleration. Present your results in a one-paragraph analysis.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    When rendering the "meshedit/maxplanck.dae", it took 60s to complete without BVH acceleration, and 0.08s with BVH acceleration. 
+    When rendering the "sky/CBlucy.dae", it took 136s to complete without BVH acceleration, and 0.053s with BVH acceleration. 
+    It's clearly obvious that with BVH we do not have to test every signle primitive for each ray, and thus save us much time when rendering.
 </p>
 <br>
 
@@ -299,7 +315,11 @@ You will probably want to use the instructional machines for the above renders i
   Walk through your implementation of the indirect lighting function.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    This is a recursive function. For a given incident light ray and an intersection point, we can caluculate its direct one bounce lighting at the intersection point using function from part3.
+    Next, we sample the incoming ray at this point with pdf associated with this ray. We trace this incoming ray to scene objects to see if it intersects with anything and find the intersection 
+    point if so. We can calculate the indrect lighting like in direct illumination using Monte Carlo estimator for irradiance with radiance calculated from recursion and pdf we got from "sample_f".
+    The global illumination at the intersection point is the sum of one bounce lighting and indirect lighting we traced through the scene. 
+    We stop the infinite recursion with a probability presetted like Russian Roulette.
 </p>
 <br>
 
@@ -311,12 +331,12 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/spheres.png" align="middle" width="400px"/>
+        <figcaption>CBspheres_lambertian.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/CBbunny.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae</figcaption>
       </td>
     </tr>
   </table>
@@ -331,19 +351,19 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Only direct illumination (example1.dae)</figcaption>
+        <img src="images/spheres_direct.png" align="middle" width="400px"/>
+        <figcaption>Only direct illumination (CBspheres_lambertian.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Only indirect illumination (example1.dae)</figcaption>
+        <img src="images/spheres_indirect.png" align="middle" width="400px"/>
+        <figcaption>Only indirect illumination (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    The direct illumination comes from only zero bounce and one bounce lighting. The indirect illumination comes from at least two bounces of lighting.
 </p>
 <br>
 
@@ -355,27 +375,27 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/CBbunny_0.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 0 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/CBbunny_1.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 1 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/CBbunny_2.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 2 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/CBbunny_3.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 3 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/CBbunny_100.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 100 (CBbunny.dae)</figcaption>
       </td>
     </tr>
@@ -383,7 +403,7 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    With more bounces allowed, we will have more realistice scene rendered. For example, the ceiling becomes brighter and the shadow of bunny becomes smaller.
 </p>
 <br>
 
@@ -395,45 +415,45 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>1 sample per pixel (example1.dae)</figcaption>
+        <img src="images/spheres_s1.png" align="middle" width="400px"/>
+        <figcaption>1 sample per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>2 samples per pixel (example1.dae)</figcaption>
-      </td>
-    </tr>
-    <tr align="center">
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>4 samples per pixel (example1.dae)</figcaption>
-      </td>
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>8 samples per pixel (example1.dae)</figcaption>
+        <img src="images/spheres_s2.png" align="middle" width="400px"/>
+        <figcaption>2 samples per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>16 samples per pixel (example1.dae)</figcaption>
+        <img src="images/spheres_s4.png" align="middle" width="400px"/>
+        <figcaption>4 samples per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>64 samples per pixel (example1.dae)</figcaption>
+        <img src="images/spheres_s8.png" align="middle" width="400px"/>
+        <figcaption>8 samples per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>1024 samples per pixel (example1.dae)</figcaption>
+        <img src="images/spheres_s16.png" align="middle" width="400px"/>
+        <figcaption>16 samples per pixel (CBspheres_lambertian.dae)</figcaption>
+      </td>
+      <td>
+        <img src="images/spheres_s64.png" align="middle" width="400px"/>
+        <figcaption>64 samples per pixel (CBspheres_lambertian.dae)</figcaption>
+      </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/spheres_s1024.png" align="middle" width="400px"/>
+        <figcaption>1024 samples per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    The more samples-per-pixel we have, the less rendering artifact will we get (Specifically those black dots).
 </p>
 <br>
 
