@@ -143,9 +143,10 @@
                 Otherwise, we split the bounding box via a split axis, classify each primitive to either left bounding box or right bounding box based on their centroid,
                 and make these bounding box left and right child of the current node and perform the same construction on these children recursively. \n
 
-                The spliting heuristic we used is that we find the average centroid of all primitives. Tested on each split axis (x,y,z axis) with split point using the average controid,
-                calculate bounding Volume per primitive on both left and right bounding box and sum them up, whatever axis that yield the smallest bounding volume per primitive sumed is the
-                ideal axis to split. We then use that axis to split and use the average controid on that axis as splitting point.
+                The spliting heuristic we used is that we find the average centroid of all primitives. Tested on each split axis (x,y,z axis) with split point using the average centroid on each axis.
+                We then calculate the heuristic scores for each axis by multiplying bounding Volume and number of primitives on each side and sum them up. The axis that yield the smallest heuristic score is the
+                ideal axis to split. We then use that axis to split and use the average controid on that axis as splitting point. By using this heuristic method, we get rid of some 
+		largely unbalenced splits. 
             </p>
 
             <h3>
