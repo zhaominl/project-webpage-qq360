@@ -136,12 +136,12 @@
             <p>
                 The algorithm construct the BVH like a tree datatype where all nodes stores a bounding box data that covers all primitive inside the box.
                 Specifically, all internal node has non-empty left and right child, and all leaf node has non-empty start and end iterator that points to
-                all primitives inside the associated bounding box. \n
+                all primitives inside the associated bounding box. <br/>
 
                 The BVH tree is constructed using recursion. By checking the number of primitives inside the current bounding box,
                 if it is a leaf node (number of primitives is small enough), we assign primitive iterator properly and return.
                 Otherwise, we split the bounding box via a split axis, classify each primitive to either left bounding box or right bounding box based on their centroid,
-                and make these bounding box left and right child of the current node and perform the same construction on these children recursively. \n
+                and make these bounding box left and right child of the current node and perform the same construction on these children recursively. <br/>
 
                 The spliting heuristic we used is that we find the average centroid of all primitives. Tested on each split axis (x,y,z axis) with split point using the average centroid on each axis.
                 We then calculate the heuristic scores for each axis by multiplying bounding Volume and number of primitives on each side and sum them up. The axis that yield the smallest heuristic score is the
