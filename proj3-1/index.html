@@ -43,7 +43,8 @@
 
     <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2023</h1>
     <h1 align="middle">Project 3-1: Path Tracer</h1>
-    <h2 align="middle">Chaomin Li, Zhiqi Yan</h2>
+    <h2 align="middle">Chaomin Li</h2>
+    <h2 align="middle">Zhiqi Yan</h2>
 
     <!-- Add Website URL -->
     <h2 align="middle">Website URL: <a href="https://zhaominl.github.io/project-webpage-qq360/proj3-1/index.html">LINK</a></h2>
@@ -69,17 +70,32 @@
             <h3>
                 Walk through the ray generation and primitive intersection parts of the rendering pipeline.
             </h3>
-            <p>
-                YOUR RESPONSE GOES HERE
-            </p>
+            <ol>
+                <li>First, we implement <code>Camera::generate_ray</code>, we move the original (x,y) by (-.5, -.5) and multiple it with \((2 * tan(radians(hFov / 2)), 2 * tan(radians(vFov / 2)))\). Since the camera sensor lies on the plane Z = -1,
+                we get the new vector \((newX, newY, -1)\) representing (x,y) in camera space. We normalize this vecotr and generate a ray with camera's position and the vector as direction. We also set ray's <code>(max_t, min_t)</code> to its farest and 
+            nearest clips.</li>
+                <li>In the <code>raytrace_pixel()</code> function, we have the pixel's (x,y), and we want to genreate random rays pointing to the point in range (x:x+1, y:y+1). </li>
+                <li>Inorder to do so, we use <code>get_sample()</code> to generate a coordinate in unit sqare, and we plus this to the original x,y and divide it by the width and height of sample buffer to normalize it.</li>
+                <li>For future use, we set ray's depth to the maximum ray depth. </li>
+                <li>For each random ray we generated, we use <code>est_radiance_global_illumination()</code> to get the expected color/illumination of that ray. Right now we just use normal shading.</li>
+                <li>After summing up the illumination (default colors) of all sample ray, we divide it by the number of samples and update the corresponding pixel in sample buffer. </li>
+            </ol>
             <br />
 
             <h3>
                 Explain the triangle intersection algorithm you implemented in your own words.
             </h3>
-            <p>
-                YOUR RESPONSE GOES HERE
+            <p>In this task, we implemented the Moller Trumbore algorithm to calculate triangle intersection.</p>
+            <p>Moller Trumbore algorithm is a fast and reliable way to calculate the intersection of a ray and a triangle in 3-D space. By knowing the three vertices of the triangle and ray's origin and direction, we can calculate 
+                the time value in ray's formula, and the 2 of the barycentric coordinates to check if the ray intersect with a point inside the triangle. We did following step:
             </p>
+            <ol>
+                <li>We first use the Moller Trumbore algorithm to get the \([t, b1, b2]\), where b1 and b2 are two barycentric coordinates.</li>
+                <li>After we get the 3d vector we want, we check if t exists within max_t and min_t of the ray</li>
+                <li>We also check if <code>b1, b2, 1 - b1 - b2</code> are all within range [0,1], which is required by the barycentric rule.</li>
+                <li>If all the the checks in 2, 3 are satisfied, we say the ray intersect with a point in triangle on the plane. In <code>Triangle::intersect()</code>, we update ray's max_t with the new t, and we
+                update the intersection's information with the new t, new normal at the intersection point, new bsdf, and new primitive (the triangle itself).</li>
+            </ol>
             <br />
 
             <h3>
@@ -90,22 +106,18 @@
                 <table style="width:100%">
                     <tr align="center">
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>example1.dae</figcaption>
+                            <img src="img/empty_p1.png" align="middle" width="400px" />
+                            <figcaption>800 x 600 Empty Room</figcaption>
                         </td>
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>example2.dae</figcaption>
+                            <img src="img/spheres_p1.png" align="middle" width="400px" />
+                            <figcaption>800 x 600 Two Spheres</figcaption>
                         </td>
                     </tr>
                     <tr align="center">
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>example3.dae</figcaption>
-                        </td>
-                        <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>example4.dae</figcaption>
+                            <img src="img/gems_p1.png" align="middle" width="400px" />
+                            <figcaption>800 x 600 Three Spheres</figcaption>
                         </td>
                     </tr>
                 </table>
@@ -185,9 +197,55 @@
             <h3>
                 Walk through both implementations of the direct lighting function.
             </h3>
-            <p>
-                YOUR RESPONSE GOES HERE
-            </p>
+            <br/>
+            <h3>Direct light sample over hemisphere</h3>
+            <ol>
+                <li>We use the Monte Carlo estimator to calculate the irradiance on the hitting point.We did following steps to achieve it.
+                    <img src="img/mce.png" align="middle" width="400px" />
+                            <figcaption>Monte Carlo estimator</figcaption>
+                </li>
+                <li>
+                    First, we calculate the hit point using the ray and intersection. And we get the direction of the w_out by taking the negtive direction of the ray. We want to create <code>num_samples</code> of sample ray, while <code>num_samples</code>
+                    equals to the total number of lights multiplies the samples per light. The sample ray has one bounce on the surface and goes in the negative direction camera ray.
+                </li>
+                <li>For each sample ray, we first generate a sample direction on hemisphere using <code>hemisphereSampler->get_sample()</code>, turn that into world coordinates, and create the sample ray using this direction and hit point. 
+                    We set the min_t of the ray to \(EPS\_F\) to avoid numerical precision issue.
+                </li>
+                <li>
+                    We calculate the \(cos(\theta)\) taking the dot product of normal vector (0,0,1) and random sample direction. <br/> 
+                    We then use the bvh's intersect method we defined in Part 2 to check if the ray intersects with a surface and store the intersection information if yes. If the ray intersects with an object, we check if that is a light source by calling
+                    <code>ray_isect.bsdf->get_emission()</code>. If not, this sample would return a 0 lightning. If yes, we can then follow the MC estimator's formula to calculate one instance of the estimator. <br/>
+                    We get the BSDF transform vector of the in and out ray on the hitting point, by calling <code>isect.bsdf->f(out, in)</code>. We multiple this with the sample radiance and \(cos\theta\) we get in advance. And we divide this by the Sample
+                    ray's possibility, which is \(\frac{1}{2\pi}\). We add this number to the total radiance.
+                </li>
+                <li>
+                    Finally, we average the total radiance by the number of samples to get the Monte Carlo Estimator.
+                </li>
+            </ol>
+
+            <h3>Direct light sample over light source</h3>
+            <ol>
+                <li>
+                    Similar to Over-Hemisphere, we still use Monte Carlo Estimation, and we get the hitting point and the w_out ray first. However, instead of create fix number of random sample ray, this time we loop through all the light sources and generate certain numbers of sample Ray
+                    directing toward the light sources. We generate one ray for point light sources and <code>ns_area_light</code> ray for area light sources. 
+                </li>
+                <li>
+                    For each light source, after we decide the number of samples N we need, we do N iterations. For each round, we get a sample ray by calling the <code>sample_L()</code> method on Light. We only pass in the hitting point, and we can get the 
+                    sample ray's direction, distance between hit point and light, and its pdf (possibility function). 
+                </li>
+                <li>
+                    To detect if the hitting point surface can actually receive the light from light source, we generate a ray with hit point and sample ray direction, and set its (min_t, max_t) to \((EPS\_F, EPS\_F + DistanceToLight)\) (\(EPS\_F\) to avoid numerical precision issue).
+                    We also compute the \(cos(\theta)\) by transforming sample ray's direction to object direction (due to sample_L() property) and dot product with normal vector.
+                </li>
+                <li>                    
+                    We check if the sample ray intersects with a object between its max and min t. If yes, we give up this sample ray since it cannot reach the light.
+                    If no, we can compute one instance of MC estimator using all the values we find/define above. (we still get BSDF transforming vector by calling <code>isect.bsdf->f(out, in)</code>)
+                </li>
+                <li>                    
+                    For each light source, we sum up the radiance and divide it by the number of samples. We then get the Monte Carlo Estimator of the irradiance we want.
+                </li>
+            </ol>
+	
 
             <h3>
                 Show some images rendered with both implementations of the direct lighting function.
@@ -207,23 +265,23 @@
                     <br />
                     <tr align="center">
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>example1.dae</figcaption>
+                            <img src="img/spheres_h_p3.png" align="middle" width="400px" />
+                            <figcaption>Two Spheres with Hemisphere Direct Illumination (s=64 l=32)</figcaption>
                         </td>
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>example1.dae</figcaption>
+                            <img src="img/spheres_i_p3.png" align="middle" width="400px" />
+                            <figcaption>Two Spheres with Importance Sampling Direct Illumination (s=64 l=32)</figcaption>
                         </td>
                     </tr>
                     <br />
                     <tr align="center">
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>example2.dae</figcaption>
+                            <img src="img/bunny_h_p3.png" align="middle" width="400px" />
+                            <figcaption>Bunny with Hemisphere Direct Illumination (s=64 l=32)</figcaption>
                         </td>
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>example2.dae</figcaption>
+                            <img src="img/bunny_i_p3.png" align="middle" width="400px" />
+                            <figcaption>Bunny with Importance Sampling Direct Illumination (s=64 l=32)</figcaption>
                         </td>
                     </tr>
                     <br />
@@ -232,35 +290,36 @@
             <br />
 
             <h3>
-                Focus on one particular scene with at least one area light and compare the noise levels in <b>soft shadows</b> when rendering with 1, 4, 16, and 64 light rays (the -l flag) and with 1 sample per pixel (the -s flag) using light sampling, <b>not</b> uniform hemisphere sampling.
+                Focus on one particular scene with at least one area light and compare the noise levels in <b>soft shadows</b> when rendering with 1, 4, 16, and 64 light rays (the -l flag) and with 1 sample per pixel (the -s flag) 
+                using light sampling, <b>not</b> uniform hemisphere sampling.
             </h3>
             <!-- Example of including multiple figures -->
             <div align="middle">
                 <table style="width:100%">
                     <tr align="center">
                         <td>
-                            <img src="img/your_file.png" align="middle" width="200px" />
-                            <figcaption>1 Light Ray (example1.dae)</figcaption>
+                            <img src="img/bunny_l1_p3.png" align="middle" width="200px" />
+                            <figcaption>1 Light Ray (CBbunny)</figcaption>
                         </td>
                         <td>
-                            <img src="img/your_file.png" align="middle" width="200px" />
-                            <figcaption>4 Light Rays (example1.dae)</figcaption>
+                            <img src="img/bunny_l4_p3.png" align="middle" width="200px" />
+                            <figcaption>4 Light Rays (CBbunny)</figcaption>
                         </td>
                     </tr>
                     <tr align="center">
                         <td>
-                            <img src="img/your_file.png" align="middle" width="200px" />
-                            <figcaption>16 Light Rays (example1.dae)</figcaption>
+                            <img src="img/bunny_l16_p3.png" align="middle" width="200px" />
+                            <figcaption>16 Light Rays (CBbunny)</figcaption>
                         </td>
                         <td>
-                            <img src="img/your_file.png" align="middle" width="200px" />
-                            <figcaption>64 Light Rays (example1.dae)</figcaption>
+                            <img src="img/bunny_l64_p3.png" align="middle" width="200px" />
+                            <figcaption>64 Light Rays (CBbunny)</figcaption>
                         </td>
                     </tr>
                 </table>
             </div>
             <p>
-                YOUR EXPLANATION GOES HERE
+                The soft shadow become softer and smoother as the number of light ray increases. One sampler per light has the most noisy soft shadow. 64 sampler per light has the smoothest soft shadow.
             </p>
             <br />
 
@@ -268,7 +327,10 @@
                 Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
             </h3>
             <p>
-                YOUR RESPONSE GOES HERE
+                Compared with uniformly sampling in the hemisphere, importance sampling to the light sources creates less noisy and smoother picture, when taking the same amount of sampling. The ways to sampling hugely differentiates these two approaches.
+                For the DLS over hemisphere, since sample ray has random direction within the space, many of them do not hit the light sources even if they actually can receive direct light from some resources in space. Therefore, the pictures rendered turn to 
+                noisy and have many black pixels across the whole picture. For DSL with improtance sample toward the lights, the lights from lighting areas have a much greater possibility to hit the point if there is not object between them. This leads to a 
+                less noisy and smoother output. 
             </p>
             <br />
 
@@ -435,35 +497,57 @@
             <h3>
                 Explain adaptive sampling. Walk through your implementation of the adaptive sampling.
             </h3>
-            <p>
-                YOUR RESPONSE GOES HERE
+            <p>While rendering a picture, we don't necessary need to render the same number of samples for each pixel in order to get a nice-look less-noisy picture. In fact, in stead of uniform sampling for each pixel, we can use adaptive sampling to 
+                adjust the sample rate for each pixel of the picture. For the pixels which converge quickly, we use smaller numbers of sampling. And for the difficult parts of the picture, we increase the numbers of sampling to decrease the noise. This approach
+                let us focus our computation resources on the parts that we really need to pay attention to.
             </p>
+
+            <ol>
+                <li>
+                    For the preparation part, we create two variable <code>s1, s2</code> to store the sums of the radiance's illuminance  and the square of illuminance of the sample rays. We have <code>actual_sample</code> to store the actual number of 
+                    sampling for the current pixel. And we have <code>sample_count</code> to check if samples in each batch reach batch's limit.
+                </li>
+                <li>
+                    <code>ns_aa</code> is the max number of iteration we have for ray sampling. Like part 1, we generate the ray and update the total radiance. Also, we update the <code>s1, s2</code> with sample ray's radiance.
+                </li>
+                <li>
+                    If the <code>sample_count</code> reaches the batch limit, we can do one round of calculation to see if the measuring variable \(I\) falls below the Max Tolerance Line. We get the \(\mu\) and \(\sigma^2\) doing the calculation
+                    involves <code>s1, s2</code>, and we calculate the I use formula: \(I = 1.96 * \frac{\sigma}{\sqrt{n}}\). If the value of I is less than or equal to the \(maxTolenrance * \mu \) (meaning this pixel converges), we break 
+                    the iteration and stop sampling for this pixel. Otherwise, we clear the <code>sample_count</code> and keep sampling until it converges or reach the maximum number of sampling.
+                </li>
+                <li>
+                    After finishing the sampling we need, we divide the total radiance by the <code>actual_sample</code> and assign this value to the pixel which locates inside the sample buffer. Also, we update the <code>actual_sample</code> to the
+                    sample counter for each pixel.
+                </li>
+            </ol>
             <br />
 
             <h3>
-                Pick two scenes and render them with at least 2048 samples per pixel. Show a good sampling rate image with clearly visible differences in sampling rate over various regions and pixels. Include both your sample rate image, which shows your how your adaptive sampling changes depending on which part of the image you are rendering, and your noise-free rendered result. Use 1 sample per light and at least 5 for max ray depth.
+                Pick two scenes and render them with at least 2048 samples per pixel. Show a good sampling rate image with clearly visible differences in sampling rate over various regions and pixels. 
+                Include both your sample rate image, which shows your how your adaptive sampling changes depending on which part of the image you are rendering, and your noise-free rendered result. 
+                Use 1 sample per light and at least 5 for max ray depth.
             </h3>
             <!-- Example of including multiple figures -->
             <div align="middle">
                 <table style="width:100%">
                     <tr align="center">
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>Rendered image (example1.dae)</figcaption>
+                            <img src="img/spheres_p5.png" align="middle" width="400px" />
+                            <figcaption>Rendered image (CBspheres_lambertian.dae)</figcaption>
                         </td>
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>Sample rate image (example1.dae)</figcaption>
+                            <img src="img/spheres_p5_rate.png" align="middle" width="400px" />
+                            <figcaption>Sample rate image (CBspheres_lambertian.dae)</figcaption>
                         </td>
                     </tr>
                     <tr align="center">
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>Rendered image (example2.dae)</figcaption>
+                            <img src="img/bunny_p5.png" align="middle" width="400px" />
+                            <figcaption>Rendered image (CBbunny.dae)</figcaption>
                         </td>
                         <td>
-                            <img src="img/your_file.png" align="middle" width="400px" />
-                            <figcaption>Sample rate image (example2.dae)</figcaption>
+                            <img src="img/bunny_p5_rate.png" align="middle" width="400px" />
+                            <figcaption>Sample rate image (CBbunny.dae)</figcaption>
                         </td>
                     </tr>
                 </table>
