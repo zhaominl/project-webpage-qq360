@@ -216,7 +216,7 @@
                     We calculate the \(cos(\theta)\) taking the dot product of normal vector (0,0,1) and random sample direction. <br/> 
                     We then use the bvh's intersect method we defined in Part 2 to check if the ray intersects with a surface and store the intersection information if yes. If the ray intersects with an object, we check if that is a light source by calling
                     <code>ray_isect.bsdf->get_emission()</code>. If not, this sample would return a 0 lightning. If yes, we can then follow the MC estimator's formula to calculate one instance of the estimator. <br/>
-                    We get the BSDF transform vector of the in and out ray on the hitting point, by calling <code>isect.bsdf->f(out, in)</code>. We multiple this with the sample radiance and \(cos\theta\) we get in advance. And we divide this by the Sample
+                    We get the BSDF transform vector of the in and out ray on the hitting point, by calling <code>isect.bsdf->f(out, in)</code> (which is the material's relectance divided by \(\pi\)). We multiple this with the sample radiance and \(cos\theta\) we get in advance. And we divide this by the Sample
                     ray's possibility, which is \(\frac{1}{2\pi}\). We add this number to the total radiance.
                 </li>
                 <li>
@@ -299,21 +299,21 @@
                 <table style="width:100%">
                     <tr align="center">
                         <td>
-                            <img src="img/bunny_l1_p3.png" align="middle" width="200px" />
+                            <img src="img/bunny_l1_p3.png" align="middle" width="400px" />
                             <figcaption>1 Light Ray (CBbunny)</figcaption>
                         </td>
                         <td>
-                            <img src="img/bunny_l4_p3.png" align="middle" width="200px" />
+                            <img src="img/bunny_l4_p3.png" align="middle" width="400px" />
                             <figcaption>4 Light Rays (CBbunny)</figcaption>
                         </td>
                     </tr>
                     <tr align="center">
                         <td>
-                            <img src="img/bunny_l16_p3.png" align="middle" width="200px" />
+                            <img src="img/bunny_l16_p3.png" align="middle" width="400px" />
                             <figcaption>16 Light Rays (CBbunny)</figcaption>
                         </td>
                         <td>
-                            <img src="img/bunny_l64_p3.png" align="middle" width="200px" />
+                            <img src="img/bunny_l64_p3.png" align="middle" width="400px" />
                             <figcaption>64 Light Rays (CBbunny)</figcaption>
                         </td>
                     </tr>
