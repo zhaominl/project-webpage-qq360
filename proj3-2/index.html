@@ -38,33 +38,12 @@
         * NOTE: For this project, you will choose TWO out of the four given parts to complete. One of those parts must be Part 1 or Part 2. In other words, you can choose any combination of two parts except the pair (Part 3, Part 4).
         <h3>Parts to be graded: P2 and P4</h3>
 
-        <h3 align="middle">Part 1. Mirror and Glass Materials</h3>
+        <h3 align="middle">Overview</h3>
 
         <p>
             <b>
-                Show a sequence of six images of scene `CBspheres.dae` rendered with `max_ray_depth` set to 0, 1, 2, 3, 4, 5, and 100. The other settings should be at least 64 samples per pixel and 4 samples per light. Make sure to include all screenshots.
+                The path-tracing algorithm allows us to render realistic surface of scene objects via different technique. In part 2, we implemented the Microfacet model, making surface rendered more reasonable. In part 4, we implemented depth of field so that the focusing of scene can be adjusted to different distance.
             </b>
-        </p>
-        <p>
-            Your response goes here.
-        </p>
-        <br />
-        <p>
-            <b>
-                Point out the new multibounce effects that appear in each image.
-            </b>
-        </p>
-        <p>
-            Your response goes here.
-        </p>
-        <br />
-        <p>
-            <b>
-                Explain how these bounce numbers relate to the particular effects that appear. Make sure to include all screenshots.
-            </b>
-        </p>
-        <p>
-            Your response goes here.
         </p>
         <br />
 
@@ -192,7 +171,15 @@
             </b>
         </p>
         <p>
-            Your response goes here.
+            The thin-lens camera model simulate real human-eye effect that only objects on plane of focus are focused and clear to see while other places
+            in the scene is out of focus. \n
+            Unlike pinhole camera, Location on the image plane in thin-lens model takes radiance from rays going from not
+            only the center of lens but also other places on the len that has rays refracted to the same location on the image plane.
+            If we trace back that refracted ray back to the scene, we will find it intersecting the ray that originates from the same location on the image plane
+            and goes through center of the len at the plane of focus, which is focal distance away from the len. \n
+            We generate that refracted ray by uniformly sample the len disk to the scenes and do ray tracing stuff that we have done in project 3-1
+            will give us the depth of field effect.
+            
         </p>
         <br />
         <p>
@@ -201,8 +188,33 @@
             </b>
         </p>
         <p>
-            Your response goes here.
+            We rendered "" using 4 different focal distance, while using 256 samples per pixel, 4 samples per light, max ray depth of 12,
+            and lens radius of 0.05.
         </p>
+        <div align="middle">
+            <table style="width:100%">
+                <tr align="center">
+                    <td>
+                        <img src="img/CBdragon_a0005.png" align="middle" width="400px" />
+                        <figcaption>Render with 0.005 Roughness Dragon Statue(CBdragon_microfacet_au.dae)</figcaption>
+                    </td>
+                    <td>
+                        <img src="img/CBdragon_a005.png" align="middle" width="400px" />
+                        <figcaption>Render with 0.05 Roughness Dragon Statue(CBdragon_microfacet_au.dae)</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="img/CBdragon_a025.png" align="middle" width="400px" />
+                        <figcaption>Render with 0.25 Roughness Dragon Statue(CBdragon_microfacet_au.dae)</figcaption>
+                    </td>
+                    <td>
+                        <img src="img/CBdragon_a05.png" align="middle" width="400px" />
+                        <figcaption>Render with 0.5 Roughness Dragon Statue(CBdragon_microfacet_au.dae)</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <br />
         <p>
             <b>
@@ -210,8 +222,33 @@
             </b>
         </p>
         <p>
-            Your response goes here.
+            We rendered "" using 4 different focal distance, while using 256 samples per pixel, 4 samples per light, max ray depth of 12,
+            and focal lens of 4.5.
         </p>
+        <div align="middle">
+            <table style="width:100%">
+                <tr align="center">
+                    <td>
+                        <img src="img/CBdragon_a0005.png" align="middle" width="400px" />
+                        <figcaption>Render with 0.005 Roughness Dragon Statue(CBdragon_microfacet_au.dae)</figcaption>
+                    </td>
+                    <td>
+                        <img src="img/CBdragon_a005.png" align="middle" width="400px" />
+                        <figcaption>Render with 0.05 Roughness Dragon Statue(CBdragon_microfacet_au.dae)</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="img/CBdragon_a025.png" align="middle" width="400px" />
+                        <figcaption>Render with 0.25 Roughness Dragon Statue(CBdragon_microfacet_au.dae)</figcaption>
+                    </td>
+                    <td>
+                        <img src="img/CBdragon_a05.png" align="middle" width="400px" />
+                        <figcaption>Render with 0.5 Roughness Dragon Statue(CBdragon_microfacet_au.dae)</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <br />
 
         <h3 align="middle">Contribution</h3>
