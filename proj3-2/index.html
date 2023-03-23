@@ -172,11 +172,11 @@
         </p>
         <p>
             The thin-lens camera model simulate real human-eye effect that only objects on plane of focus are focused and clear to see while other places
-            in the scene is out of focus. \n
+            in the scene is out of focus. <br/>
             Unlike pinhole camera, Location on the image plane in thin-lens model takes radiance from rays going from not
             only the center of lens but also other places on the len that has rays refracted to the same location on the image plane.
             If we trace back that refracted ray back to the scene, we will find it intersecting the ray that originates from the same location on the image plane
-            and goes through center of the len at the plane of focus, which is focal distance away from the len. \n
+            and goes through center of the len at the plane of focus, which is focal distance away from the len. <br/>
             We generate that refracted ray by uniformly sample the len disk to the scenes and do ray tracing stuff that we have done in project 3-1
             will give us the depth of field effect.
             
