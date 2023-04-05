@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <style>
+        body {
+            background-color: white;
+            padding: 100px;
+            width: 1000px;
+            margin: auto;
+            text-align: left;
+            font-weight: 300;
+            font-family: 'Open Sans', sans-serif;
+            color: #121212;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        kbd {
+            color: #121212;
+        }
+    </style>
+    <title>CS 184 Path Tracer</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet" />
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async=async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+
+</head>
+
+
+<body>
+
+    <h1 align="middle">CS 284A: Computer Graphics and Imaging, Spring 2023</h1>
+    <h1 align="middle">Final Project Proposal</h1>
+    <h2 align="middle">Zhengjiang He</h2>
+    <h2 align="middle">Hirotaka Ishihara</h2>
+    <h2 align="middle">Chaomin Li</h2>
+    <h2 align="middle">Zhiqi Yan</h2>
+
+    <!-- Add Website URL -->
+    <h2 align="middle">Website URL: <a href="https://zhaominl.github.io/project-webpage-qq360/final_project/proposal/index.html">LINK</a></h2>
+
+    <br /><br />
+
+	<h2 align="middle">Project Title</h2>
+    <p align="middle">3D Fluid Dynamics Simulation of Different Smoke Compositions and Containers
+    </p>
+
+    <br /><br />
+
+	<h2 align="middle">Project Summary</h2>
+    <p>The project involves creating a 3D fluid dynamics simulation that models the behavior of an incompressible, 
+        homogeneous fluid under the Navier-Stokes equations. The simulation should include the ability to simulate smoke with different 
+        compositions and to model the effects of different containers made of various materials and shapes. 
+    </p>
+
+    <br /><br />
+
+	<h2 align="middle">Team members</h2>
+    <ol>
+        <li>Zhengjiang He (CS284A),  zhengjiang.he@berkeley.edu
+        </li>
+        <li>Hirotaka Ishihara (CS284A), hirotaka.ishihara@berkeley.edu
+        </li>
+        <li>Chaomin Li (CS284A), zhaominl@berkeley.edu
+        </li>
+        <li>Zhiqi Yan (CS284A),  zhiqiyan@berkeley.edu
+        </li>
+    </ol>
+
+    <br /><br />
+
+	<h2 align="middle">Problem Description</h2>
+    <p>We are going to develop a 3D fluid dynamics simulation that estimates the behavior of an incompressible, homogeneous 
+        fluid under the Navier-Stokes equations. The simulation should model the movement of smoke and how they interact with different objects, 
+        such as barriers/containers made of different materials and shapes. <br/>
+
+        Our simulation will also model the behavior of smoke with different compositions, which models the movement of particles within the 
+        smoke, and how they interact with each other and with the fluid. To simulate the effects of different materials and shapes of the 
+        barriers/containers, we will need to implement boundary conditions that represent the surfaces of the containers. These boundary conditions 
+        should be able to accurately represent the properties of the materials used to construct the containers and should be able to account for any 
+        effects that these materials may have on the fluid and smoke.
+        
+    </p>
+
+    <br /><br />
+
+	<h2 align="middle">Goals and Deliverables</h2>
+    <h3>
+        What we plan to deliver:
+    </h3>
+    <ul>
+        <li><b>Smoke simulator with user interactivity:</b> Our aim is to create a smoke simulation system that allows users to generate smoke of varying colors 
+            by clicking on the interface. Users will be able to change the origin of the smoke by dragging the mouse, and the velocity of the 
+            smoke will be affected by their actions. Users will also be able to define the properties of the smoke, such as density and buoyancy.
+        </li>
+        <li><b>Smoke collision and diffusion:</b> We will be able to define multiple physical barriers/containers in a plane or 3D space. By default, the barrier 
+            will be made of solid, smooth material (such as wood). Our simulation will enable us to observe how the smoke behaves when it hits the barrier. 
+            We expect to see the smoke rebound and diffuse on the surface according to its physical properties. We can also create holes in the barrier where 
+            the smoke can pass through, simulating smoke's interaction with a complex spatial environment.
+        </li>
+        <li><b>Real-time performance:</b> While we simulate the smoke and its collision with surfaces, we aim to ensure that the simulation has real-time performance. 
+            We want users to interact with the simulation without being distracted by computational delays. We will implement parallelism if necessary.
+        </li>
+    </ul>
+    <h3>
+        What we hope to deliver:
+    </h3>
+    <ul>
+        <li><b>Barriers with Diverse Features:</b> By default, our simulation assumes that the barrier/container is made of solid, smooth material. We will explore 
+            different physical properties of the barriers, such as surface roughness and even the use of fluid or transparent materials. 
+            This will create visually different effects where smoke might pass through or be trapped inside the barrier.
+        </li>
+        <li><b>Performance optimization:</b> We will explore different methods to improve the simulation performance, including more efficient 
+            smoke-simulating algorithms and more sophisticated parallel programming. We will document these attempts in the final report.
+        </li>
+        <li><b>API implementation:</b> If time permits, we aim to implement our simulation with multiple graphic APIs. Our preferred choices are OpenGL and Vulkan.
+        </li>
+    </ul>
+
+    <br /><br />
+
+    <h2 align="middle">Weekly Schedule</h2>
+    <ul>
+        <li>Week 1 <br/>
+            Research and planning: familiarize with fluid dynamics, Navier-Stokes equations, and numerical methods for solving them. Research particle simulation techniques and boundary conditions.            
+        </li>
+        <li>Week 2 <br/>
+            Implement basic fluid dynamics simulation: implement a basic fluid dynamics simulation that can model the movement of smoke in a container. Test and validate your simulation to ensure it is working as expected.
+            
+        </li>
+        <li>Week 3 <br/>
+            Add more smoke compositions and container materials and shapes: integrate particle simulation techniques into the existing fluid dynamics simulation 
+            to model the movement of smoke in the container. Test and validate the new simulation to ensure it is working as expected. At the end of this week, reach the milestone deadline.
+            
+        </li>
+        <li>Week 4 <br/>
+            Refine and optimize the simulation: spend time refining and optimizing the simulation to improve its accuracy and performance. Experiment with 
+            different boundary conditions to simulate containers made of different materials and shapes. Implement visualizations to display the simulation 
+            results in an understandable format. Test and validate the simulation to ensure it is working accurately and efficiently.
+            
+        </li>
+    </ul>
+
+    <br /><br />
+
+    <h2 align="middle">Resources and References</h2>
+    <ol>
+        <li>How to Write a Smoke Shader, by Omar Shehata, https://gamedevelopment.tutsplus.com/tutorials/how-to-write-a-smoke-shader--cms-25587    
+        </li>
+        <li>Chapter 38. Fast Fluid Dynamics Simulation on the GPU, https://developer.nvidia.com/sites/all/modules/custom/gpugems/books/GPUGems/gpugems_ch38.html
+        </li>
+        <li>Elements of Differential Geometry, by Parameswaran Nair, https://link.springer.com/chapter/10.1007/0-387-25098-0_14
+        </li>
+        <li>Real-Time Simulation and Rendering of 3D Fluids, by Kenan Crance, https://developer.nvidia.com/gpugems/gpugems3/part-v-physics-simulation/chapter-30-real-time-simulation-and-rendering-3d-fluids
+        </li>
+        <li>Visual Simulation of Smoke, by Ronald Fedkiw et al., https://web.stanford.edu/class/cs237d/smoke.pdf
+        </li>
+        <li>Stable Fluids, by Jos Stam, https://www.dgp.toronto.edu/public_user/stam/reality/Research/pdf/ns.pdf
+        </li>
+        <li>Fluids-2D, by Mattias Harrysson, https://github.com/mharrys/fluids-2d
+        </li>
+    </ol>
+    <p>We will use Visual Studio. We choose OpenGL for graphic development but are open to other APIs, such as Vulkan. 
+        We will use our personal computers. We would try to apply for access to UCB’s supercomputer Perlmutter (with Nvidia A100 GPUs and AMD Milan CPU).
+    </p>
+
+    </o>
+
+
+</body>
+</html>

@@ -38,33 +38,12 @@
         * NOTE: For this project, you will choose TWO out of the four given parts to complete. One of those parts must be Part 1 or Part 2. In other words, you can choose any combination of two parts except the pair (Part 3, Part 4).
         <h3>Parts to be graded: P2 and P4</h3>
 
-        <h3 align="middle">Part 1. Mirror and Glass Materials</h3>
+        <h3 align="middle">Overview</h3>
 
         <p>
             <b>
-                Show a sequence of six images of scene `CBspheres.dae` rendered with `max_ray_depth` set to 0, 1, 2, 3, 4, 5, and 100. The other settings should be at least 64 samples per pixel and 4 samples per light. Make sure to include all screenshots.
+                The path-tracing algorithm allows us to render realistic surface of scene objects via different technique. In part 2, we implemented the Microfacet model, making surface rendered more reasonable. In part 4, we implemented depth of field so that the focusing of scene can be adjusted to different distance.
             </b>
-        </p>
-        <p>
-            Your response goes here.
-        </p>
-        <br />
-        <p>
-            <b>
-                Point out the new multibounce effects that appear in each image.
-            </b>
-        </p>
-        <p>
-            Your response goes here.
-        </p>
-        <br />
-        <p>
-            <b>
-                Explain how these bounce numbers relate to the particular effects that appear. Make sure to include all screenshots.
-            </b>
-        </p>
-        <p>
-            Your response goes here.
         </p>
         <br />
 
@@ -96,7 +75,7 @@
             By comparing the pictures below, we see that with large \(\alpha\) (0.5), the dragon looks diffuse. The surfuce looks rough and does not reflect its environmental details.
             This is because the microfacets are uneven and reflecting lights to many different directions. Contrast to the large \(\alpha\), dragon with a small \(\alpha\) (0.005) appears
             to be more glossy and mirror-like, and the environmental details are reflected on the statue's surface. This is because, with a small \(\alpha\), the macro surface becomes
-            smoother, and the microfacets are more aligned together.
+            smoother, and the microfacets are more aligned together. However, as we see in picture, a small \(\alpha\) might cause more noise (white dots) when rendering.
         </p>
         <div align="middle">
             <table style="width:100%">
@@ -192,7 +171,15 @@
             </b>
         </p>
         <p>
-            Your response goes here.
+            The thin-lens camera model simulate real human-eye effect that only objects on plane of focus are focused and clear to see while other places
+            in the scene is out of focus. <br/>
+            Unlike pinhole camera, Location on the image plane in thin-lens model takes radiance from rays going from not
+            only the center of lens but also other places on the len that has rays refracted to the same location on the image plane.
+            If we trace back that refracted ray back to the scene, we will find it intersecting the ray that originates from the same location on the image plane
+            and goes through center of the len at the plane of focus, which is focal distance away from the len. <br/>
+            We generate that refracted ray by uniformly sample the len disk to the scenes and do ray tracing stuff that we have done in project 3-1
+            will give us the depth of field effect.
+            
         </p>
         <br />
         <p>
@@ -201,8 +188,33 @@
             </b>
         </p>
         <p>
-            Your response goes here.
+            We rendered "CBbunny_microfacet_cu.dae" using 4 different focal distance, while using 256 samples per pixel, 4 samples per light, max ray depth of 12,
+            and lens radius of 0.05 . We can gradually see clearly the head, ears, and body of the bunny as we increase the focal distance.
         </p>
+        <div align="middle">
+            <table style="width:100%">
+                <tr align="center">
+                    <td>
+                        <img src="img/bunny_d_1_2.png" align="middle" width="400px" />
+                        <figcaption>Render with focal distance of 1.2 (CBbunny_microfacet_cu.dae)</figcaption>
+                    </td>
+                    <td>
+                        <img src="img/bunny_d_1_4.png" align="middle" width="400px" />
+                        <figcaption>Render with focal distance of 1.4 (CBbunny_microfacet_cu.dae)</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="img/bunny_d_1_6.png" align="middle" width="400px" />
+                        <figcaption>Render with focal distance of 1.6 (CBbunny_microfacet_cu.dae)</figcaption>
+                    </td>
+                    <td>
+                        <img src="img/bunny_d_1_8.png" align="middle" width="400px" />
+                        <figcaption>Render with focal distance of 1.8 (CBbunny_microfacet_cu.dae)</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <br />
         <p>
             <b>
@@ -210,8 +222,33 @@
             </b>
         </p>
         <p>
-            Your response goes here.
+            We rendered "CBbunny_microfacet_cu.dae" using 4 different lens radius, while using 256 samples per pixel, 4 samples per light, max ray depth of 12,
+            and focal distance of 1.4 . We can see as lens radius goes up, locations other than center of the image becomes harder to see clearly.
         </p>
+        <div align="middle">
+            <table style="width:100%">
+                <tr align="center">
+                    <td>
+                        <img src="img/bunny_b_005.png" align="middle" width="400px" />
+                        <figcaption>Render with lens radius of 0.05 (CBbunny_microfacet_cu.dae)</figcaption>
+                    </td>
+                    <td>
+                        <img src="img/bunny_b_010.png" align="middle" width="400px" />
+                        <figcaption>Render with lens radius of 0.1 (CBbunny_microfacet_cu.dae)</figcaption>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <img src="img/bunny_b_020.png" align="middle" width="400px" />
+                        <figcaption>Render with lens radius of 0.2 (CBbunny_microfacet_cu.dae)</figcaption>
+                    </td>
+                    <td>
+                        <img src="img/bunny_b_030.png" align="middle" width="400px" />
+                        <figcaption>Render with lens radius of 0.3 (CBbunny_microfacet_cu.dae)</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <br />
 
         <h3 align="middle">Contribution</h3>
