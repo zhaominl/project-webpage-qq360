@@ -41,7 +41,230 @@
 
 	<h2 align="middle">Overview</h2>
 
-	<p></p>
+	<p>
+    <b>
+      Overview here
+  </p>
+  <br />
+
+  <h2 align="middle">Part 1: Masses and Springs</h2>
+
+  <h2 align="middle">Part 2: Simulation via Numerical Integration</h2>
+
+  <h2 align="middle">Part 3: Handling collisions with other objects</h2>
+
+  <p>
+    <b>
+      Shpere
+    </b>
+  </p>
+  <p>
+    The spring constant controls the stiffness of the cloth. With large ks, side portion of the cloth does not stick close to 
+    the sphere. With small ks, cloth fit closely to the sphere.
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p3_sphere_ks_500.png" align="middle" width="400px" />
+                <figcaption>final state with ks=500 (sphere.json)</figcaption>
+            </td>
+            <td>
+                <img src="img/p3_sphere_ks_5000.png" align="middle" width="400px" />
+                <figcaption>final state with ks=5000 (sphere.json)</figcaption>
+            </td>
+        </tr>
+        <tr align="center">
+            <td>
+                <img src="img/p3_sphere_ks_50000.png" align="middle" width="400px" />
+                <figcaption>final state with ks=50000 (sphere.json)</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <br />
+  <p>
+    <b>
+      Plane
+    </b>
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p3_plane.png" align="middle" width="400px" />
+                <figcaption>final state of (plane.json)</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <br />
+
+  <h2 align="middle">Part 4: Handling self-collisions</h2>
+
+  <p>
+    <b>
+      Cloth falling process
+    </b>
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p4_self_1.png" align="middle" width="400px" />
+                <figcaption>beginning of simulation (selfCollision.json)</figcaption>
+            </td>
+            <td>
+                <img src="img/p4_self_2.png" align="middle" width="400px" />
+                <figcaption>middle of simulation (selfCollision.json)</figcaption>
+            </td>
+        </tr>
+        <tr align="center">
+            <td>
+                <img src="img/p4_self_3.png" align="middle" width="400px" />
+                <figcaption>close to end of simulation (selfCollision.json)</figcaption>
+            </td>
+            <td>
+              <img src="img/p4_self_4.png" align="middle" width="400px" />
+              <figcaption>resting state (selfCollision.json)</figcaption>
+          </td>
+        </tr>
+    </table>
+  </div>
+  <br />
+  <p>
+    <b>
+      Varying spring constant
+    </b>
+  </p>
+  <p>
+    Spring constant changes stiffness of cloth. With small spring constant, the cloth folds many layers and has wrinkles.
+    With large spring constant, the cloth maintains its shape while folding, generating less layers and wrinkles. 
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p4_self_ks_500.png" align="middle" width="400px" />
+                <figcaption>simulation with ks=500 (selfCollision.json)</figcaption>
+            </td>
+            <td>
+                <img src="img/p4_self_ks_50000.png" align="middle" width="400px" />
+                <figcaption>simulation with ks=50000 (selfCollision.json)</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <br />
+  <p>
+    <b>
+      Varying density
+    </b>
+  </p>
+  <p>
+    Density contribute to external forces, and the change in desnity will have opposite effect as spring constant. 
+    With small density, the cloth floats more and folds less, resulting less layers.
+    With large density, gravition pulls cloth down and create more layers and wrinkles.
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p4_self_density_5.png" align="middle" width="400px" />
+                <figcaption>simulation with density=5 (selfCollision.json)</figcaption>
+            </td>
+            <td>
+                <img src="img/p4_self_density_50.png" align="middle" width="400px" />
+                <figcaption>simulation with density=50 (selfCollision.json)</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <br />
+  
+
+  <h2 align="middle">Part 5: Shaders</h2>
+
+  <p>
+    <b>
+      Shader program
+    </b>
+  </p>
+  <p>
+    The shader program is designed to run graphic piplines on the GPU that changes visual effect of the surface of the modeled object. 
+    Input were taken and 4-dimensional vector was outputted normally. Our project uses the vertex shader and fragment shader. 
+    Vertex shaders writes position and normal values from the model space to the world space and output them. It also calculate and output final screen position of each vertices. 
+    Fragment shaders take the output of vertex shaders and compute the lighting and color of each point using baycentric coordinate method and output them.
+  </p>
+  <br />
+  <p>
+    <b>
+      Blinn-Phong shader
+    </b>
+  </p>
+  <p>
+    The Blinn-Phong shading model is a mathematical model that simulates lighting effect human eye/camera captures from the scene.
+    It consists of three kind of shading: ambient, diffuse, and specular. Ambient shading account for environmental light with constant scaling.
+    Diffuse shading account for diffusely reflected light following the angle formed from the light source and the surface normal, which is does not depend on view angle.
+    Specular shading account for reflection from light source to the view angle, exihibiting as shining area on the object surface. 
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p5_phong_ambient.png" align="middle" width="400px" />
+                <figcaption>final state with only ambient shading (sphere.json)</figcaption>
+            </td>
+            <td>
+                <img src="img/p5_phong_diffuse.png" align="middle" width="400px" />
+                <figcaption>final state with only diffuse shading (sphere.json)</figcaption>
+            </td>
+        </tr>
+        <tr align="center">
+            <td>
+                <img src="img/p5_phong_specular.png" align="middle" width="400px" />
+                <figcaption>final state with only specular shading (sphere.json)</figcaption>
+            </td>
+            <td>
+              <img src="img/p5_phong_all.png" align="middle" width="400px" />
+              <figcaption>final state with whole Blinn-Phong shading (sphere.json)</figcaption>
+          </td>
+        </tr>
+    </table>
+  </div>
+  <br />
+  <p>
+    <b>
+      Texture mapping shader
+    </b>
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p5_texture_1.png" align="middle" width="400px" />
+                <figcaption>initial state of custom texture image (sphere.json)</figcaption>
+            </td>
+            <td>
+                <img src="img/p5_texture_2.png" align="middle" width="400px" />
+                <figcaption>final state of custom texture image (sphere.json)</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <br />
+  <p>
+    <b>
+      Bump mapping and displacement mapping shader
+    </b>
+  </p>
+  <br />
+  <p>
+    <b>
+      Environment-mapped Reflections
+    </b>
+  </p>
+
 
 
 	<h3 align="middle">Project Link</h3>
