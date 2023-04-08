@@ -59,7 +59,7 @@
     In the first part, we construct the point masses and springs systems to represent the simulated cloth. The first method we implemented 
     is <code>Cloth::buildGrid()</code>. We divided totoal width/height by number of points on x/y axis and get the distance between two 
     close point masses. To build the mass, we need to decide each point's position. If cloth's orientation is <b>Horizontal</b>, we set the y axies
-    to 1. And if cloth's orientation is <b>Vertical</b>, we set the z axis to a number in range \( \(-\frac{1}{1000}, \frac{1}{1000}\)\). We set z to 
+    to 1. And if cloth's orientation is <b>Vertical</b>, we set the z axis to a number in range \( (-\frac{1}{1000}, \frac{1}{1000}) \). We set z to 
     <code>(2 * rand() - RAND_MAX) / RAND_MAX / 1000</code>. We store all the point masses in a vector. And we marked all the pinned points.<br/>
 
     We then built three types of springs. For <b>Structural spring</b>, we first checked if the point is on the edge of the cloth, and we paired the neighbor points together
@@ -196,13 +196,13 @@
                 <figcaption>pinned2.json with damping equals to 0.10, the cloth swing backwards</figcaption>
             </td>
             <td>
-                <img src="img/p2_dm10_final.png" align="middle" width="400px" />
+                <img src="img/p2_dm75.png" align="middle" width="400px" />
                 <figcaption>pinned2.json with damping equals to 0.75, the cloth falls down slowly</figcaption>
             </td>
         </tr>
         <tr align="center">
             <td>
-                <img src="img/p2_dm75.png" align="middle" width="400px" />
+                <img src="img/p2_dm10_final.png" align="middle" width="400px" />
                 <figcaption>pinned2.json, final state for both 0.1 and 0.75 damping</figcaption>
             </td>
         </tr>
