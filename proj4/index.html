@@ -448,6 +448,9 @@
       Texture mapping shader
     </b>
   </p>
+  <p>
+    To do the texture mapping, we simply call <code>texture()</code> on the texture we stored and texture space coordinate uv.
+  </p>
   <div align="middle">
     <table style="width:100%">
         <tr align="center">
@@ -474,6 +477,24 @@
       Environment-mapped Reflections
     </b>
   </p>
+  <p>
+    To do the Environment-mapped Reflections, we first compute the outgoing ray \(w_o\) usinf the camera position and the fragment position it provides. 
+    Then we reflect the \(w_o\) on the given surface to get \(w_i\), by calling <code>reflect()</code>. Then we do the texture mapping using <code>u_texture_cubemap</code> and \(w_i\).
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p5_mirror_1.png" align="middle" width="400px" />
+                <figcaption>Mirror shader on sphere (sphere.json)</figcaption>
+            </td>
+            <td>
+                <img src="img/p5_mirror_2.png" align="middle" width="400px" />
+                <figcaption>Mirror shader on cloth (sphere.json)</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
 
 
 
