@@ -50,8 +50,187 @@
   <br />
 
   <h2 align="middle">Part 1: Masses and Springs</h2>
+  <p>
+    <b>
+      Implementation
+    </b>
+  </p>
+  <p>
+    In the first part, we construct the point masses and springs systems to represent the simulated cloth. The first method we implemented 
+    is <code>Cloth::buildGrid()</code>. We divided totoal width/height by number of points on x/y axis and get the distance between two 
+    close point masses. To build the mass, we need to decide each point's position. If cloth's orientation is <b>Horizontal</b>, we set the y axies
+    to 1. And if cloth's orientation is <b>Vertical</b>, we set the z axis to a number in range \( \(-\frac{1}{1000}, \frac{1}{1000}\)\). We set z to 
+    <code>(2 * rand() - RAND_MAX) / RAND_MAX / 1000</code>. We store all the point masses in a vector. And we marked all the pinned points.<br/>
+
+    We then built three types of springs. For <b>Structural spring</b>, we first checked if the point is on the edge of the cloth, and we paired the neighbor points together
+    (a point with its upper point and left point). For <b>Shearing spring</b>, we first get the four close points on each grid's corners. In these four points, we applied 
+    shearing spring to the two pairs of diagonal point masses. For <b>Bending spring</b>, we first checked if the point is on the edge space of the cloth. If not, we paired 
+    that point with two points on its 2-grid left and 2-grid above.
+  </p>
+  <p>
+    <b>
+      Cloth falling process
+    </b>
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p1_wo_shearing.png" align="middle" width="400px" />
+                <figcaption>pinned2.json without any shearing constraints</figcaption>
+            </td>
+            <td>
+                <img src="img/p1_w_shearing.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with only shearing constraints</figcaption>
+            </td>
+        </tr>
+        <tr align="center">
+            <td>
+                <img src="img/p1_all.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with all constraints</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
+
 
   <h2 align="middle">Part 2: Simulation via Numerical Integration</h2>
+  <p>
+    <b>
+      Implementation
+    </b>
+  </p>
+  <p>
+    In the second part, we compute point position simulation using numerical integration. We implemented part of <code>Cloth::simulate()</code>. First,
+    we nned to computer the force applied each point mass. We first compute the external force by accumulating external acceleration on each point and 
+    multiply by the mass. We update this force to each point mass in grid. Then we use Hooke's Law \(F_s = k_s (\lVert p_a - p_b \rVert - l)\) to compute
+    the elastic force for three type of springs (if this constriants is enabled). For Bending constriant, we want to have a smaller effect, so we multiply
+    the \(k_s\) by 0.2. <br/>
+    Then we can compute the acceleration on each point mass using its force divided by its mass. We can now use Verlet integration \(x_{t+dt} = x_t + (1 - d) (x_t - x_{t-dt}) + a_t d_t^2\)
+    to simulate the point's new position using its last position and currecnt position. Here, \(d\) stands for damping term. <br/>
+    Next, we need to constrain the position update. After we calculating the new position for all points, we check if the distasnce between any point exceeds the 1.1 times of its rest
+    length. If yes, we check if any point is pinned and adjust the unpinned point(s) to make sure the distance between two points does not exceed the constraint. 
+  </p>
+  <p>
+    <b>
+      Describe the effects of changing the spring constant ks
+    </b>
+  </p>
+  <p>
+    We first simluate the <code>pinned2.json</code> with different ks spring constant. In Hooke's Law, ks contribute to the elastic force. A cloth, with larger ks value, has larger elastic force 
+    accumulated by inter-point springs. This can make the cloth looks more stiff. For a small ks, the cloth looks much looser and the external force applied to the cloth may take over the correction
+    force. Here we simultion the cloth drop with three ks values (1000, 5000 (default), and 50000). We can see, compare to default 5000 ks, the cloth look much more stiff when <code>ks = 50000</code>,
+    large ks makes the cloth suffer look smoother, with less wrinkles. On the other hands, with small ks (1000), the cloth looks really loose. The middle top of the cloth drops a lot and give a sense of
+    lacking force. More wrinkles shows up, and the bottom of the cloth spand a little bit compared with default ks. 
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p2_ks1000.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with ks equals to 1000</figcaption>
+            </td>
+            <td>
+                <img src="img/p2_ks5000.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with ks equals to 5000 (default)</figcaption>
+            </td>
+        </tr>
+        <tr align="center">
+            <td>
+                <img src="img/p2_ks50000.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with ks equals to 50000</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
+
+  <p>
+    <b>
+      Density
+    </b>
+  </p>
+  <p>
+    We then simluate the <code>pinned2.json</code> with different density. Density determines the mass on each point mass. The mass is mainly considered when computing the 
+    external forces, such as gravity. Large density may result in large external forces, which may later overcome the spring constrains and yield different visual patterns,
+    such as loosing cloth, more wrinkles, and stretched bottom. In the comparison below, we see that the cloth looks the same as previous exmple, naturally dropping down, when density is 15.
+    We update the density to 5. Due to less mass on each point, the spring constraints influence the simulation more, which shows a stiff cloth. While we set density to 75, the mass
+    increases and the external force somehow overcomes the spring constrains. As the result, the cloth looks more loose, just like the cloth with low <code>ks</code> term.
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p2_ds5.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with density equals to 5</figcaption>
+            </td>
+            <td>
+                <img src="img/p2_ds15.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with density equals to 15 (default)</figcaption>
+            </td>
+        </tr>
+        <tr align="center">
+            <td>
+                <img src="img/p2_ds75.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with density equals to 75</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
+
+  <p>
+    <b>
+      Damping
+    </b>
+  </p>
+  <p>
+    We first simluate the <code>pinned2.json</code> with different damping term (between 0 and 1). The damping would affect the final state of the simulation (the equilibrium state), but it affects
+    how the simulation reaches the final state. With a large damping (0.75), the integration formula with count less of the position movement from last position to current. Therefore, 
+    we will see the cloth reaches the final state slower then the default (overdamping). On the other hands, a small damping term (0.10) will make the simulation underdamping, so the cloth will
+    swing back and forth before reaching the final state.
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p2_dm10.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with damping equals to 0.10, the cloth swing backwards</figcaption>
+            </td>
+            <td>
+                <img src="img/p2_dm10_final.png" align="middle" width="400px" />
+                <figcaption>pinned2.json with damping equals to 0.75, the cloth falls down slowly</figcaption>
+            </td>
+        </tr>
+        <tr align="center">
+            <td>
+                <img src="img/p2_dm75.png" align="middle" width="400px" />
+                <figcaption>pinned2.json, final state for both 0.1 and 0.75 damping</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
+
+  <p>
+    <b>
+      Pinned4 Simulation
+    </b>
+  </p>
+  <p>
+    We finally simluate the <code>pinned4.json</code> with default setting. Below we present our simulation result.
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p2_pin4_1.png" align="middle" width="400px" />
+                <figcaption>pinned4.json final state, normal shading</figcaption>
+            </td>
+            <td>
+                <img src="img/p2_pin4_2.png" align="middle" width="400px" />
+                <figcaption>pinned2.json final state, wireframe</figcaption>
+            </td>
+        </tr>
+    </table>
+  </div>
 
   <h2 align="middle">Part 3: Handling collisions with other objects</h2>
 
