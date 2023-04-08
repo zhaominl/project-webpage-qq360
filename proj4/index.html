@@ -54,6 +54,21 @@
 
   <p>
     <b>
+      Implementation
+    </b>
+  </p>
+  <p>
+    To handle collision with other primitives, we simply check if any point mass is inside any primitives. If so, we bounce back simulated path to adjust 
+    its position to places outside of the primitives using a correction vector. The correction vector is the vector from last position of the point mass to
+    a tangent point. For a sphere, a tangent point can be the point just outside the phere and on the line formed by the position of the point mass and the
+    center of the sphere. For a plane, a tangent point can be the point just above the plane and on the line formed by extending the plane normal from the
+    position of the point mass. In addition, the correction vector is scaled down by a friction term. \n
+    
+    After implementing these in Sphere::collide and Plane::collide, we update Cloth::simulate with code that checks each point mass with every primitives for 
+    possible collision.
+  </p>
+  <p>
+    <b>
       Shpere
     </b>
   </p>
@@ -101,6 +116,20 @@
 
   <h2 align="middle">Part 4: Handling self-collisions</h2>
 
+  <p>
+    <b>
+      Implementation
+    </b>
+  </p>
+  <p>
+    To handle self-collision, we implemented spatial hashing and store each point mass in 3D boxes. The size of the box is (w,h,t), where 
+    w = 3 * width / num_width_points, h = 3 * height / num_height_points, t = max(w, h). For a unqiue 3D box id with coordinate (w_index,h_index,t_index),
+    our hashing function returns unqiue floating point: 10000*w_index + h_index + 0.0001 * t_index. We clear and build such hash table each step of the simulation.\n
+    
+    For each point mass, we only need to check other point mass that are in the same 3D box for self-collision. If the distance between the checked point mass 
+    and a candidate point mass is smaller than set threshold (2*thickness), We add the correction vector (vector that need to be applied to checked point mass 
+    only so that they are far enough from each other) to a list and take the average of that list in the end to get final correction vector for the checked point mass.
+  </p>
   <p>
     <b>
       Cloth falling process
