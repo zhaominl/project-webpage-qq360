@@ -471,6 +471,71 @@
       Bump mapping and displacement mapping shader
     </b>
   </p>
+  <p>
+    We then implemented bump mapping and displacement mapping. These two mapping are similar, both using height map to calculate a new normal for each fragment. 
+    In order to do the transform, we need to calculate the <b>tangent-bitangent-normal (TBN) matrix</b>, with is comprised of a tangent vector t, a original model-space normal vector n, 
+    and their cross product. We then compute the \(dU, dV\), the actual change in u and v by considering height map, and we get the local space normal \( n_o = (-dU, -dV, 1)\). We multiple the 
+    TBN matrix to the local space normal to get our displaced space normal. <br/>
+    After that, we apply the Blinn-Phong shading and replace the original h vector with the displaced space normal \(n_d\) we just calculated.<br/>
+    For displacement mapping, we also need to update each vertex position in the direction of the original model space vertex normal, and multiply to u_height_scaling for scaling. <br.><br/>
+
+    We run both mappings using <code>texture_3</code> offered by class. For bump mapping, it gives an illusino of bump/shade on the surface of the sphere and cloth. However, by rotating the 
+    space, we can see the surface of both sphere and cloth is smooth. While for displacement mapping, the surfaces are no longer smooth, we can actually see the height displacement on the material.
+    After cloth falls on the sphere, the surface of cloth is still not smooth, bumping up against the sphere.
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p5_bump_sphere.png" align="middle" width="400px" />
+                <figcaption>Bump mapping on sphere (sphere.json)</figcaption>
+            </td>
+            <td>
+                <img src="img/p5_bump_cloth.png" align="middle" width="400px" />
+                <figcaption>Bump mapping on cloth (sphere.json)</figcaption>
+            </td>
+        </tr>
+        <tr align="center">
+          <td>
+              <img src="img/p5_bump_16.png" align="middle" width="400px" />
+              <figcaption>Bump mapping on sphere with -o 16 -a 16 (sphere.json)</figcaption>
+          </td>
+          <td>
+              <img src="img/p5_bump_128.png" align="middle" width="400px" />
+              <figcaption>Bump mapping on sphere with -o 128 -a 128 (sphere.json)</figcaption>
+          </td>
+      </tr>
+    </table>
+  </div>
+  <p>
+    We then update the coarseness of the sphere mesh to 16 and 128 and observe the difference. For bump mapping, since it only use visual illusion without actually changing the 
+    surface, we cannot tell a huge different after changing the coarseness. But for displacement mapping, the change is much more obvious. With larger coarseness (128), the vertices on
+    surface vary more. Hence, visually the sphere looks more coarse for 128 than 16 coarseness.
+  </p>
+  <div align="middle">
+    <table style="width:100%">
+        <tr align="center">
+            <td>
+                <img src="img/p5_bump_16.png" align="middle" width="400px" />
+                <figcaption>Bump mapping on sphere with -o 16 -a 16 (sphere.json)</figcaption>
+            </td>
+            <td>
+                <img src="img/p5_bump_128.png" align="middle" width="400px" />
+                <figcaption>Bump mapping on sphere with -o 128 -a 128 (sphere.json)</figcaption>
+            </td>
+        </tr>
+        <tr align="center">
+          <td>
+              <img src="img/p5_bump_16.png" align="middle" width="400px" />
+              <figcaption>Bump mapping on sphere with -o 16 -a 16 (sphere.json)</figcaption>
+          </td>
+          <td>
+              <img src="img/p5_bump_128.png" align="middle" width="400px" />
+              <figcaption>Bump mapping on sphere with -o 128 -a 128 (sphere.json)</figcaption>
+          </td>
+      </tr>
+    </table>
+  </div>
   <br />
   <p>
     <b>
