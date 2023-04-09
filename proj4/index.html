@@ -509,8 +509,9 @@
   </div>
   <p>
     We then update the coarseness of the sphere mesh to 16 and 128 and observe the difference. For bump mapping, since it only use visual illusion without actually changing the 
-    surface, we cannot tell a huge different after changing the coarseness, besides a small change in light shading. But for displacement mapping, the change is much more obvious. With larger coarseness (128), the vertices on
-    surface vary more. Hence, visually the sphere looks more coarse for 128 than 16 coarseness.
+    sphere mesh during mapping, we cannot tell a huge different after changing the coarseness, besides a small change in light shading. But for displacement mapping, the change is much more obvious. With larger vertical and horizontal resolutions(128), there are more vertices on
+    surface. Therefore, the displacement mapping, applied on a lot more vertices for a high coarseness, presents more small but realistic details. Compared with 128 coarseness, the low coarseness (16) contains less details and
+    looks less natural.
   </p>
   <div align="middle">
     <table style="width:100%">
