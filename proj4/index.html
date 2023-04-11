@@ -481,7 +481,8 @@
 
     We run both mappings using <code>texture_3</code> offered by class. For bump mapping, it gives an illusino of bump/shade on the surface of the sphere and cloth. However, by rotating the 
     space, we can see the surface of both sphere and cloth is smooth. While for displacement mapping, the surfaces are no longer smooth, we can actually see the height displacement on the material.
-    After cloth falls on the sphere, the surface of cloth is still not smooth, bumping up against the sphere.
+    After cloth falls on the sphere, the surface of cloth is still not smooth, bumping up against the sphere. <br/>
+    <b>(Bump with normal 2 and height 1, Displacement with normal 100 and height 0.03)</b>
   </p>
   <div align="middle">
     <table style="width:100%">
@@ -534,7 +535,17 @@
               <img src="img/p5_disp_128.png" align="middle" width="400px" />
               <figcaption>Displacement mapping on sphere with -o 128 -a 128 (sphere.json)</figcaption>
           </td>
-      </tr>
+        </tr>
+        <tr align="center">
+          <td>
+              <img src="img/p5_disp_16_cloth.png" align="middle" width="400px" />
+              <figcaption>Displacement mapping on cloth with -o 16 -a 16 (sphere.json)</figcaption>
+          </td>
+          <td>
+              <img src="img/p5_disp_128_cloth.png" align="middle" width="400px" />
+              <figcaption>Displacement mapping on cloth with -o 128 -a 128 (sphere.json)</figcaption>
+          </td>
+        </tr>
     </table>
   </div>
   <br />
